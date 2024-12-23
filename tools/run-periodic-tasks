@@ -1,0 +1,147 @@
+#!/usr/bin/perl -w
+
+# Movable Type (r) (C) Six Apart Ltd. All Rights Reserved.
+# This code cannot be redistributed without permission from www.sixapart.com.
+# For more information, consult your Movable Type license.
+#
+# $Id$
+
+use strict;
+
+use FindBin;
+use lib ("$FindBin::Bin/../lib", "$FindBin::Bin/../extlib");
+
+my $daemonize = 0;
+my $sleep     = 5;
+my $help      = 0;
+my $load      = 10;
+my $verbose   = 1;
+my $scoreboard;
+my $randomize_jobs = 0;
+my $trace_objects  = 0;
+my $workers;
+my $ignore = '';
+my $floor;
+my $process_cap;
+
+require Getopt::Long;
+Getopt::Long::GetOptions(
+    "daemon"        => \$daemonize,
+    "sleep=i"       => \$sleep,
+    "load=i"        => \$load,
+    "scoreboard=s"  => \$scoreboard,
+    "randomly"      => \$randomize_jobs,
+    "verbose"       => \$verbose,
+    "leak"          => \$trace_objects,
+    "quiet"         => sub { $verbose = 0 },
+    "workers=s"     => \$workers,
+    "ignore=s"      => \$ignore,
+    "floor=i"       => \$floor,
+    "process_cap=i" => \$process_cap,
+);
+require MT::TheSchwartz;
+
+if ($trace_objects) {
+    require Devel::Leak::Object;
+    Devel::Leak::Object->import(qw{ GLOBAL_bless });
+}
+
+my $proc_process_table = eval {
+    require Proc::ProcessTable;
+    1;
+};
+
+$@ = undef;
+
+my %cfg;
+$cfg{verbose}    = $verbose;
+$cfg{scoreboard} = $scoreboard;
+$cfg{prioritize} = 1;
+$cfg{floor}      = $floor;
+
+require MT::Bootstrap;
+require MT;
+
+my $mt = MT->new() or die MT->errstr;
+$process_cap ||= MT->config('RPTProcessCap');
+if ( $process_cap && $proc_process_table ) {
+    my $t         = new Proc::ProcessTable;
+    my $rpt_count = 0;
+    my $cmndfile  = File::Basename::basename(__FILE__);
+    my $cmndline  = ( grep { $_->pid eq $$ } @{ $t->table } )[0]->cmndline;
+    $cmndline =~ s/(?<=\Q$cmndfile\E).*//;
+    foreach my $p ( @{ $t->table } ) {
+        $rpt_count++ if $p->cmndline =~ m/^\Q$cmndline\E/;
+    }
+    if ( $rpt_count > $process_cap ) {
+        $rpt_count = $rpt_count - 1;    # Don't report this RPT
+        die "$rpt_count processes already running; cancelling RPT launch\n";
+    }
+}
+
+if ( MT->config('RPTFreeMemoryLimit') ) {
+    my $limit = MT->config('RPTFreeMemoryLimit');
+    if ( $limit and ! MT::TheSchwartz::_has_enough_memory($limit) ) {
+        die
+            "Free memory below RPT limit; cancelling RPT launch\n";
+    }
+}
+if ( MT->config('RPTFreeSwapLimit') ) {
+    my $swaplimit = MT->config('RPTSwapMemoryLimit');
+    if ( $swaplimit and ! MT::TheSchwartz::_has_enough_swap($swaplimit) ) {
+        die
+            "Free swap memory below RPT limit; cancelling RPT launch\n";
+    }
+}
+
+my @worker_classes;
+if ($workers) {
+    for my $name ( split /,/, $workers ) {
+        $name = "MT::Worker::" . $name unless $name =~ /::/;
+        push @worker_classes, $name;
+    }
+} else {
+    my %ignore_map;
+    for my $name ( split /,/, $ignore ) {
+        $name = "MT::Worker::" . $name unless $name =~ /::/;
+        $ignore_map{$name} = 1;
+    }
+    my $all_workers = MT->registry("task_workers") || {};
+    for my $worker ( values %$all_workers ) {
+        my $worker_class = $worker->{class} or next;
+        next if $ignore_map{$worker_class};
+        push @worker_classes, $worker_class;
+    }
+}
+$cfg{workers} = \@worker_classes if @worker_classes;
+
+$mt->{vtbl}                 = {};
+$mt->{is_admin}             = 0;
+$mt->{template_dir}         = 'cms';
+$mt->{user_class}           = 'MT::Author';
+$mt->{plugin_template_path} = 'tmpl';
+$mt->run_callbacks( 'init_app', $mt );
+
+my $client = eval {
+    require MT::TheSchwartz;
+    no warnings 'once';
+    $TheSchwartz::RANDOMIZE_JOBS = !!$randomize_jobs;
+    my $c = MT::TheSchwartz->new(%cfg);
+    $c;
+};
+if ( ( my $error = $@ ) && $verbose ) {
+    print STDERR "Error initializing TheSchwartz: $error\n";
+}
+
+if ( $daemonize && $client ) {
+    $client->set_batch_size($load);
+    $client->work_periodically($sleep);
+}
+else {
+
+    # First, run periodic tasks
+    $mt->run_tasks();
+    $client->work_until_done if $client;
+}
+
+1;

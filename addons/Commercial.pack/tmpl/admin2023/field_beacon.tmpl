@@ -1,0 +1,19 @@
+<!-- start-customfield_beacon -->
+<input type="hidden" name="customfield_beacon" value="1" id="customfield_beacon" />
+<script type="text/javascript">
+/* <![CDATA[ */
+    function fill_upload_field(id, url, html) {
+        document.getElementById('customfield_' + id).value = url;
+        var preview = document.getElementById('preview_' + id);
+        if (!preview) return;
+        preview.innerHTML = html;
+        var img = preview.getElementsByTagName('img')[0];
+        if(img.width > 240) {
+            var pct = 240 / img.width; 
+            img.width = 240;
+            img.height = Math.floor(pct * img.height);
+        }
+    }
+/* ]]> */
+</script>
+<!-- end-customfield_beacon -->

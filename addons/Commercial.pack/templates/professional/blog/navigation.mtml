@@ -1,0 +1,25 @@
+<__trans_section component="commercial">
+<ul>
+    <li class="first<mt:If name="main_index"> on</mt:If>"><a href="<$mt:Link template="<__trans phrase="Main Index">"$>"><__trans phrase="Home"></a></li>
+<mt:IfBlog>
+    <mt:BlogParentWebsite>
+    <li class="<mt:If name="blog_index"> on</mt:If>"><a href="<$mt:WebsiteURL$>blogs/"><__trans phrase="Blogs"></a></li>
+    </mt:BlogParentWebsite>
+</mt:IfBlog>
+
+<mt:Pages tag="@topnav" include_blogs="siblings" include_with_website="1">
+<mt:SetVarBlock name="this_page_id"><$mt:PageID$></mt:SetVarBlock>
+<li class="<mt:If name="nav_on" eq="$this_page_id"> on</mt:If>"><a href="<$mt:PagePermalink$>"><$mt:PageTitle$></a></li>
+</mt:Pages>
+
+<mt:Pages tags="@about" limit="1" include_blogs="siblings" include_with_website="1">
+<mt:SetVarBlock name="this_page_id"><$mt:PageID$></mt:SetVarBlock>
+<li class="<mt:If name="nav_on" eq="$this_page_id"> on</mt:If>"><a href="<$mt:PagePermalink$>"><$mt:PageTitle$></a></li>
+</mt:Pages>
+
+<mt:Pages tags="@contact" limit="1" include_blogs="siblings" include_with_website="1">
+<mt:SetVarBlock name="this_page_id"><$mt:PageID$></mt:SetVarBlock>
+<li class="last<mt:If name="nav_on" eq="$this_page_id"> on</mt:If>"><a href="<$mt:PagePermalink$>"><$mt:PageTitle$></a></li>
+</mt:Pages>
+</ul>
+</__trans_section>

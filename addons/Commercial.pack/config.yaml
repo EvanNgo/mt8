@@ -1,0 +1,1097 @@
+name: Professional Pack
+author_name: Six Apart Ltd.
+version: 8.004000
+schema_version: 1.55
+l10n_class: MT::Commercial::L10N
+
+object_types:
+    field: CustomFields::Field
+
+backup_instructions:
+    field:
+        order: 410
+
+config_settings:
+    EmbedDomainWhitelist:
+        default: >
+            youtube.com vimeo.com viddler.com hulu.com flickr.com
+            vox.com scribd.com ustream.tv myspace.com blip.tv
+            seesmic.com video.google.com dailymotion.com
+            slideshare.net macromedia.com veoh.com
+            12seconds.tv vodpod.com joost.com podtech.net
+            odeo.com splashcast.net spike.com
+    UpdateDisplayOptionByFollowingField:
+        default: 1
+
+customfield_objects:
+    entry:
+        context: all
+        order: 100
+    page:
+        context: all
+        order: 200
+    category:
+        context: all
+        order: 800
+    folder:
+        context: all
+        order: 900
+    author:
+        context: system
+        order: 1300
+    file:
+        context: all
+        order: 400
+    audio:
+        context: all
+        order: 500
+    image:
+        context: all
+        order: 700
+    video:
+        context: all
+        order: 600
+    comment:
+        context: all
+        order: 300
+    template:
+        context: all
+        order: 1000
+    blog:
+        context:
+            - system
+            - blog
+        order: 1100
+    website:
+        context:
+            - system
+            - website
+        order: 1200
+
+entry_types:
+    photo:
+        label: Photo
+        fields: title, field.photo, text
+        order: 10
+    link:
+        label: Link
+        fields: title, field.url, text
+        order: 20
+    embed:
+        label: Embed
+        fields: title, field.embed, text
+        order: 30
+    audio:
+        label: Audio
+        fields: title, field.audio, text
+        order: 40
+
+callbacks:
+    init_app: $Commercial::CustomFields::App::init_app
+#    *::init_request:
+#        handler: $Commercial::CustomFields::Util::install_field_tags
+    api_save_filter.entry: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_entry
+    api_save_filter.author: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_author
+    api_save_filter.comment: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_comment
+    api_post_save.author: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+    api_post_save.comment: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+    api_post_save_junk.comment: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+    MT::Category::post_remove: $Commercial::CustomFields::App::CMS::post_remove_object
+    MT::Folder::post_remove: $Commercial::CustomFields::App::CMS::post_remove_object
+    MT::ObjectAsset::pre_remove: $Commercial::CustomFields::App::CMS::pre_remove_objectasset
+    restore: $Commercial::CustomFields::BackupRestore::cb_restore_objects
+    restore_asset: $Commercial::CustomFields::BackupRestore::cb_restore_asset
+    restored.field: $Commercial::CustomFields::BackupRestore::cb_add_meta
+    post_init: $Commercial::CustomFields::Util::load_meta_fields
+    MT::Entry::unpack_revision: $Commercial::CustomFields::Util::unpack_revision
+    MT::Page::unpack_revision: $Commercial::CustomFields::Util::unpack_revision
+    MT::Template::unpack_revision: $Commercial::CustomFields::Util::unpack_revision
+    MT::Entry::gather_changed_cols: $Commercial::CustomFields::Util::gather_changed_cols
+    MT::Page::gather_changed_cols: $Commercial::CustomFields::Util::gather_changed_cols
+    MT::Template::gather_changed_cols: $Commercial::CustomFields::Util::gather_changed_cols
+    MT::Blog::post_clone: $Commercial::CustomFields::Util::clone_field
+    cms_save_permission_filter.field: $Commercial::CustomFields::App::CMS::can_save
+    cms_delete_permission_filter.field: $Commercial::CustomFields::App::CMS::can_delete
+
+applications:
+    comments:
+        callbacks:
+            template_param.signup: $Commercial::CustomFields::App::Comments::signup_param
+            template_param.profile: $Commercial::CustomFields::App::Comments::profile_param
+    cms:
+        enable_object_methods:
+            field:
+                delete: 1
+                save: 1
+        callbacks:
+            template_param.header: $Commercial::CustomFields::App::CMS::header_add_style
+            template_param.cfg_prefs: $Commercial::CustomFields::App::CMS::cfg_customfields
+            template_param.cfg_content_nav: $Commercial::CustomFields::App::CMS::cfg_content_nav_param
+            template_param.cfg_system_content_nav: $Commercial::CustomFields::App::CMS::cfg_content_nav_param
+            # template_param.list_entry: $Commercial::CustomFields::App::CMS::list_entry_param
+            template_param.edit_entry: $Commercial::CustomFields::App::CMS::edit_entry_param
+            template_param.edit_category: $Commercial::CustomFields::App::CMS::edit_category_param
+            template_param.edit_folder: $Commercial::CustomFields::App::CMS::edit_category_param
+            template_param.edit_author: $Commercial::CustomFields::App::CMS::edit_author_param
+            template_param.edit_asset: $Commercial::CustomFields::App::CMS::edit_asset_param
+            template_param.edit_comment: $Commercial::CustomFields::App::CMS::edit_comment_param
+            template_param.edit_template: $Commercial::CustomFields::App::CMS::edit_template_param
+            template_param.asset_insert: $Commercial::CustomFields::App::CMS::asset_insert_param
+            template_param.cfg_entry: $Commercial::CustomFields::App::CMS::cfg_entry_param
+            template_param.widget/new_version: $Commercial::CustomFields::App::CMS::new_version_widget
+            template_param.widget/blog_stats_entry: $Commercial::CustomFields::App::CMS::blog_stats_entry
+            template_param.clone_blog: $Commercial::CustomFields::App::CMS::clone_blog
+            template_param.dialog_clone_blog: $Commercial::CustomFields::App::CMS::clone_blog
+            cms_pre_save.field: $Commercial::CustomFields::App::CMS::CMSPreSave_field
+            cms_pre_save.category: $Commercial::CustomFields::App::CMS::save_fields_list
+            cms_pre_save.folder: $Commercial::CustomFields::App::CMS::save_fields_list
+            cms_post_save.blog: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+            cms_post_save.entry: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+            cms_post_save.page: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+            cms_post_save.category: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+            cms_post_save.folder: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+            cms_post_save.author: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+            cms_post_save.asset: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+            cms_post_save.comment: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+            cms_post_save.template: $Commercial::CustomFields::App::CMS::CMSPostSave_customfield_objs
+            cms_post_save.field: $Commercial::CustomFields::App::CMS::CMSPostSave_field
+            cms_save_filter.entry: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_entry
+            cms_save_filter.page: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_page
+            cms_save_filter.asset: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_asset
+            cms_save_filter.template: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_template
+            cms_save_filter.category: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_category
+            cms_save_filter.folder: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_folder
+            cms_save_filter.author: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_author
+            cms_save_filter.comment: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_comment
+            cms_save_filter.blog: $Commercial::CustomFields::App::CMS::CMSSaveFilter_customfield_objs_blog
+            cms_save_filter.field: $Commercial::CustomFields::App::CMS::CMSSaveFilter_field
+            cms_pre_preview: $Commercial::CustomFields::App::CMS::CMSPrePreview_customfield_objs
+            cms_pre_load_filtered_list.field: $Commercial::CustomFields::App::CMS::cms_pre_load_filtered_list
+            cms_filtered_list_param.field: $Commercial::CustomFields::App::CMS::filtered_list_param
+            list_template_param.field: $Commercial::CustomFields::App::CMS::list_template_param
+            cms_post_delete.field: $Commercial::CustomFields::App::CMS::CMSDelete_field
+        methods:
+            view_field: $Commercial::CustomFields::App::CMS::edit_field
+            prep_customfields_upgrade: $Commercial::CustomFields::App::CMS::prep_customfields_upgrade
+        menus:
+            custom_fields:
+                label: Custom Fields
+                icon: ic_customfield
+                order: 1300
+            custom_fields:manage:
+                label: Manage
+                order: 100
+                mode: list
+                args:
+                    _type: field
+                view:
+                    - blog
+                    - website
+                    - system
+                condition: |
+                    sub {
+                        my $app = MT->instance;
+                        my $user = $app->user;
+                        my $blog = $app->blog;
+                        return 1 if $user->is_superuser;
+
+                        my $terms;
+                        push @$terms, { author_id => $user->id };
+                        if ( $blog ) {
+                            my @blog_ids;
+                            push @blog_ids, $blog->id;
+                            if ( !$blog->is_blog ) {
+                                push @blog_ids, map { $_->id } @{$blog->blogs};
+                            }
+                            push @$terms, [ '-and', [
+                                {
+                                    blog_id => \@blog_ids,
+                                    permissions => { like => "\%'edit_templates'\%" },
+                                },
+                                '-or',
+                                {
+                                    blog_id => 0,
+                                    permissions => { like => "\%'edit_templates'\%" },
+                                },
+                            ] ];
+                        } else {
+                            push @$terms, [ '-and',
+                                [
+                                    {
+                                        blog_id => 0,
+                                        permissions => { like => "\%'edit_templates'\%" },
+                                    },
+                                    '-or',
+                                    {
+                                        blog_id => \' > 0',
+                                        permissions => { like => "\%'edit_templates'\%" },
+                                    }
+                                ]
+                            ];
+                        }
+
+                        my $cnt = MT->model('permission')->count( $terms );
+                        return ( $cnt && $cnt > 0 ) ? 1 : 0;
+                    }
+            custom_fields:create:
+                label: New
+                order: 200
+                mode: view
+                args:
+                    _type: field
+                view:
+                    - blog
+                    - website
+                    - system
+                permission: edit_templates
+                system_permission: edit_templates
+            custom_fields:save:
+                order: 10000
+                mode: save
+                args:
+                    _type: field
+                permission: edit_templates
+                system_permission: edit_templates
+                view:
+                    - blog
+                    - website
+                    - system
+                display: 0
+        import_formats:
+            import_mt:
+                export_handler: $Commercial::CustomFields::ImportExport::export_cf
+                additional_keys:
+                    -
+                        import_key: CF50_
+                        import_handler: $Commercial::CustomFields::ImportExport::import_cf
+    data_api:
+        callbacks:
+            data_api_list_permission_filter.field: $Commercial::CustomFields::DataAPI::Callback::Field::can_list
+            data_api_pre_load_filtered_list.field: $Commercial::CustomFields::DataAPI::Callback::Field::cms_pre_load_filtered_list
+            data_api_view_permission_filter.field: $Commercial::CustomFields::DataAPI::Callback::Field::can_view
+            data_api_save_permission_filter.field: $Commercial::CustomFields::App::CMS::can_save
+            data_api_save_filter.field: $Commercial::CustomFields::DataAPI::Callback::Field::save_filter
+            data_api_save_filter: $Commercial::CustomFields::DataAPI::Callback::save_filter
+            data_api_pre_save.field: $Commercial::CustomFields::DataAPI::Callback::Field::pre_save
+            data_api_delete_permission_filter.field: $Commercial::CustomFields::App::CMS::can_delete
+
+        endpoints:
+            - id: list_fields
+              route: /sites/:site_id/fields
+              version: 2
+              handler: $Commercial::CustomFields::DataAPI::Endpoint::v2::Field::list
+              openapi_handler: $Commercial::CustomFields::DataAPI::Endpoint::v2::Field::list_openapi_spec
+              openapi_options:
+                    filtered_list_ds_nouns: field,fields
+              default_params:
+                  limit: 25
+                  offset: 0
+                  sortBy: name
+                  sortOrder: ascend
+                  searchFields: name,basename,description,tag
+                  filterKeys: systemObject,type
+              error_codes:
+                  403: Do not have permission to retrieve the requested fields.
+
+#            - id: list_all_fields
+#              route: /fields
+#              version: 2
+#              handler: $Commercial::CustomFields::DataAPI::Endpoint::v2::Field::list
+#              default_params:
+#                  limit: 25
+#                  offset: 0
+#                  sortBy: name
+#                  sortOrder: ascend
+#                  searchFields: name,basename,description,tag
+#                  filterKeys: systemObject,type
+#              error_codes:
+#                  403: Do not have permission to retrieve the requested fields.
+
+            - id: get_field
+              route: /sites/:site_id/fields/:field_id
+              version: 2
+              handler: $Commercial::CustomFields::DataAPI::Endpoint::v2::Field::get
+              openapi_handler: $Commercial::CustomFields::DataAPI::Endpoint::v2::Field::get_openapi_spec
+              error_codes:
+                  403: Do not have permission to retrieve the requested field.
+              
+            - id: create_field
+              route: /sites/:site_id/fields
+              resources:
+                  - field
+              verb: POST
+              version: 2
+              handler: $Commercial::CustomFields::DataAPI::Endpoint::v2::Field::create
+              openapi_handler: $Commercial::CustomFields::DataAPI::Endpoint::v2::Field::create_openapi_spec
+              error_codes:
+                  403: Do not have permission to create a field.
+
+            - id: update_field
+              route: /sites/:site_id/fields/:field_id
+              resources:
+                  - field
+              verb: PUT
+              version: 2
+              handler: $Commmercialk::CustomFields::DataAPI::Endpoint::v2::Field::update
+              openapi_handler: $Commmercialk::CustomFields::DataAPI::Endpoint::v2::Field::update_openapi_spec
+              error_codes:
+                  403: Do not have permission to update a field.
+
+            - id: delete_field
+              route: /sites/:site_id/fields/:field_id
+              verb: DELETE
+              version: 2
+              handler: $Commercial::CustomFields::DataAPI::Endpoint::v2::Field::delete
+              openapi_handler: $Commercial::CustomFields::DataAPI::Endpoint::v2::Field::delete_openapi_spec
+              error_codes:
+                  403: Do not have permission to delete a field.
+
+        resources:
+            # version 1
+            entry:
+                - version: 1
+                  fields: $Commercial::CustomFields::DataAPI::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+            category:
+                - version: 1
+                  fields: $Commercial::CustomFields::DataAPI::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+            comment:
+                - version: 1
+                  fields: $Commercial::CustomFields::DataAPI::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+            trackback:
+                - version: 1
+                  fields: $Commercial::CustomFields::DataAPI::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+
+            # version 2
+            blog:
+                - version: 2
+                  fields: $Commercial::CustomFields::DataAPI::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+            website:
+                - version: 2
+                  fields: $Commercial::CustomFields::DataAPI::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+            template:
+                - version: 2
+                  fields: $Commercial::CustomFields::DataAPI::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+            folder:
+                - version: 2
+                  fields: $Commercial::CustomFields::DataAPI::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+            page:
+                - version: 2
+                  fields: $Commercial::CustomFields::DataAPI::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+            asset:
+                - version: 2
+                  fields: $Commercial::CustomFields::DataAPI::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+            user:
+                - version: 2
+                  fields: $Commercial::CustomFields::DataAPI::fields_for_user
+                  updatable_fields: $Commercial::CustomFields::DataAPI::updatable_fields
+
+            field:
+                - version: 2
+                  fields: $Commercial::CustomFields::DataAPI::Resource::v2::Field::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::Resource::v2::Field::updatable_fields
+                - version: 5
+                  fields: $Commercial::CustomFields::DataAPI::Resource::v5::Field::fields
+                  updatable_fields: $Commercial::CustomFields::DataAPI::Resource::v5::Field::updatable_fields
+
+permissions:
+    blog.administer_site:
+        permitted_action:
+            edit_custom_fields: 1
+    blog.edit_templates:
+        permitted_action:
+            edit_custom_fields: 1
+            insert_asset: 1
+            access_to_insert_asset_list: 1
+    blog.edit_categories:
+        permitted_action:
+            insert_asset: 1
+            access_to_insert_asset_list: 1
+    blog.edit_assets:
+        permitted_action:
+            insert_asset: 1
+            access_to_insert_asset_list: 1
+listing_screens:
+    field:
+        object_label: Field
+        primary: name
+        default_sort_key: name
+        permission: administer_site,edit_templates
+        data_api_permission: ~
+        data_api_scope_mode: strict
+
+list_properties:
+    field:
+        name:
+            auto: 1
+            order: 100
+            display: force
+            label: Name
+            sub_fields:
+                -
+                    class: code
+                    label: Tag
+                    display: optional
+            html: |
+                sub {
+                    my ( $prop, $obj, $app ) = @_;
+                    my $name = MT::Util::encode_html($obj->name);
+                    $name = '' if !defined $name;
+                    $name =~ s/^\s+|\s+$//g;
+                    $name = "(" . $app->translate("No Name") . ")"
+                        if $name eq '';
+                    my $tag  = MT::Util::encode_html($obj->tag);
+                    my $current_blog_id = $app->param('blog_id') || 0;
+                    my $blog_id = $obj->blog_id || 0;
+                    my $scope_html = '';
+                    if ( !$current_blog_id || $blog_id != $current_blog_id ) {
+                        my $scope = 'System';
+                        if ( $blog_id > 0 ) {
+                            my $blog = MT->model('blog')->load($blog_id);
+                            $scope = $blog->is_blog ? 'Blog' : 'Website';
+                        }
+                        my $scope_lc = lc $scope;
+                        my $scope_label = MT->translate($scope);
+                        my $badge_class = '';
+                        if ( $scope_lc eq 'system' ) {
+                          $badge_class = 'badge badge-default ';
+                        } elsif ( $scope_lc eq 'website' ) {
+                          $scope_label = MT->translate('Site');
+                          $badge_class = 'badge badge-success ';
+                        } elsif ( $scope_lc eq 'blog' ) {
+                          $scope_label = MT->translate('Child Site');
+                          $badge_class = 'badge badge-info ';
+                        }
+                        $scope_html = qq{
+                            <span class="${badge_class}cf-scope $scope_lc sticky-label">$scope_label</span>
+                        };
+                    }
+                    my $required_label = MT->translate("Required");
+                    my $required
+                        = $obj->required ? qq{<span class="badge badge-default required sticky-label">$required_label</span>}
+                        :                  q{};
+
+                    my $code = sprintf( q{<pre class="pre-scrollable card card-block bg-light mt-2 p-3 code"><code>&lt;mt:If tag=&quot;%s&quot;&gt;
+                %s: &lt;mt:%s /&gt;
+                &lt;/mt:If&gt;</code></pre>}, $tag, $name, $tag );
+                    my $user = $app->user;
+                    if ( $user->is_superuser
+                         || $user->permissions($obj->blog_id)->can_do('edit_custom_fields') )
+                    {
+                        my $edit_link = $app->uri(
+                            mode => 'view',
+                            args => {
+                                _type   => 'field',
+                                id      => $obj->id,
+                                blog_id => $obj->blog_id,
+                            }
+                        );
+                        return qq{
+                            $scope_html <a href="$edit_link">$name</a> $required $code
+                        };
+                    } else {
+                        return "$scope_html $name $required $code";
+                    }
+                }
+        type:
+            base: "__virtual.single_select"
+            label: Type
+            display: default
+            order: 200
+            col: type
+            single_select_options: |
+                sub {
+                    my $prop = shift;
+                    require CustomFields::App::CMS;
+                    my $app = MT->instance;
+                    my $types = $app->registry('customfield_types');
+                    my $pack = MT->component('commercial');
+
+                    return [
+                        map  {{
+                            label => ref $types->{$_}{label}
+                                ? $types->{$_}{label}
+                                : $pack->translate($types->{$_}{label}),
+                            value => $_
+                        }}
+                        sort { $types->{$a}{order} <=> $types->{$b}{order}}
+                        grep { ( !defined $types->{$_}{show_column} ) || ( $types->{$_}{show_column} ) }
+                        keys %$types
+                    ];
+                }
+            raw: |
+                sub {
+                    my $pack = MT->component('commercial');
+                    my $prop = shift;
+                    my ( $obj ) = @_;
+                    my $options = $prop->single_select_options;
+                    my %options = map { $_->{value} => $_->{label} } @$options;
+                    my $label = $options{$obj->type} || $pack->translate( 'Unknown Type' );
+                    $label = $label->() if ref $label;
+                    return $label;
+                }
+            sort: |
+                sub {
+                    my $prop = shift;
+                    my ( $terms, $args ) = @_;
+                    $args->{sort} = 'type';
+                }
+        obj_type:
+            base: "__virtual.single_select"
+            display: force
+            order: 300
+            label: System Object
+            col: obj_type
+            single_select_options: $Commercial::CustomFields::App::CMS::object_filter_options
+            raw: |
+                sub {
+                    my $prop = shift;
+                    my ( $obj ) = @_;
+                    my $pack = MT->component('commercial');
+                    my $class = MT->model( $obj->obj_type )
+                        or return $pack->translate( 'Unknown Object' );
+                    return $pack->translate( $class->class_label );
+                }
+            sort: |
+                sub {
+                    my $prop = shift;
+                    my ( $terms, $args ) = @_;
+                    $args->{sort} = 'obj_type';
+                }
+        blog_name:
+            base: __virtual.blog_name
+            label: Site Name
+            order: 400
+            view:
+                - system
+        tag:
+            auto: 1
+            label: Tag
+            filter_label: Template tag
+            display: none
+        basename:
+            auto: 1
+            label: Basename
+            display: none
+        description:
+            auto: 1
+            label: Description
+            use_blank: 1
+            display: none
+        required:
+            base: "__virtual.single_select"
+            display: none
+            label: Required
+            col: required
+            single_select_options: >
+                sub {
+                    my @sso;
+                    my $pack = MT->component('commercial');
+
+                    push @sso, { label => $pack->translate('Required'),
+                                 value => 1 };
+                    push @sso, { label => $pack->translate('Not Required'),
+                                 value => 0 };
+                    return \@sso;
+                }
+            filter_tmpl: <__trans phrase="[_1] [_3] [_2]" params="<__trans phrase="__CF_REQUIRED_VALUE__">%%<select class="custom-select form-control <mt:var name="type">-value"><mt:loop name="single_select_options"><option value="<mt:var name="value">"><mt:var name="label" encode_html="1" encode_js="1" encode_html="1" ></option></mt:loop></select>%%<__trans phrase="__SELECT_FILTER_VERB">">
+        system_object:
+            terms: >
+                sub {
+                    my $prop = shift;
+                    my ( $args, $db_terms, $db_args ) = @_;
+                    return +{ obj_type => $args->{value} };
+                }
+            display: none
+            filter_editable: 0
+        content:
+            base: __virtual.content
+            fields:
+                - name
+                - basename
+                - description
+                - tag
+            display: none
+
+
+system_filters:
+    field: $Commercial::CustomFields::App::CMS::load_system_filters
+
+list_actions:
+    field:
+        delete:
+            label: Delete
+            order: 100
+            continue_prompt_handler: >
+                sub {
+                    my $app = MT->component('commercial');
+                    $app->translate('Are you sure you want to delete the selected CustomFields?')
+                }
+            mode: delete
+            button: 1
+            js_message: delete
+            condition: |
+                sub {
+                    my $app  = MT->instance;
+                    my $user = $app->user;
+                    return 1 if $user->is_superuser;
+                    my $blog = $app->blog;
+                    if ( !$blog ) {
+                        return $user->can_do( 'edit_custom_fields',
+                            at_least_one => 1 );
+                    }
+
+                    my $blog_ids = [ 0, $blog->id ];
+                    return $user->can_do(
+                        'edit_custom_fields',
+                        at_least_one => 1,
+                        blog_id      => $blog_ids
+                    );
+                }
+customfield_types: $Commercial::CustomFields::App::CMS::load_customfield_types
+tags: $Commercial::CustomFields::Util::load_customfield_tags
+theme_element_handlers:
+    custom_fields:
+        label: Custom Fields
+        importer:
+            import: $Commercial::CustomFields::Theme::apply
+            info: $Commercial::CustomFields::Theme::info
+            validator: $Commercial::CustomFields::Theme::validator
+        exporter:
+            params: custom_fields_export_ids 
+            component: commercial
+            condition: $Commercial::CustomFields::Theme::condition
+            template: $Commercial::CustomFields::Theme::template
+            export: $Commercial::CustomFields::Theme::export
+upgrade_functions:
+    customfields_page_meta:
+        version_limit: 1.1
+        handler: $Commercial::CustomFields::Upgrade::customfields_page_meta
+    update_uts_to_pws:
+        version_limit: 1.3
+        priority: 3.3
+        updater:
+            type: blog
+            label: Updating Universal Template Set to Professional Website set...
+            condition: >
+                sub {
+                    $_[0]->template_set &&
+                      ( $_[0]->template_set eq 'universal_website' );
+                }
+            code: >
+                sub {
+                    $_[0]->template_set('professional_website');
+                }
+    v5_migrate_cf_type:
+        version_limit: 1.51
+        priority: 3.1
+        updater:
+            type: field
+            label: Migrating CustomFields type...
+            code: >
+                sub {
+                    if ( $_[0]->type =~ m/^asset\.*(.*)/i ) {
+                        if ( $1 ) {
+                            $_[0]->type($1);
+                        } else {
+                            $_[0]->type('file');
+                        }
+                        $_[0]->save;
+                    }
+                }
+    v5_remove_cf_order:
+        version_limit: 1.52
+        priority: 5.0
+        handler: $Commercial::CustomFields::Upgrade::customfields_remove_plugindata
+    v5_remove_unlinked_field:
+        version_limit: 1.54
+        priority: 5.1
+        handler: $Commercial::CustomFields::Upgrade::remove_unlinked_field
+    v5_migrate_show_category:
+        version_limit: 1.55
+        priority: 5.2
+        updater:
+            type: category:meta
+            label: Converting CustomField type...
+            condition: >
+                sub {
+                    $_[0]->meta_type eq 'show_fields';
+                }
+            code: >
+                sub {
+                    $_[0]->meta_vclob( $_[0]->meta_vchar );
+                    $_[0]->meta_vchar( undef );
+                }
+            sql:
+                - "update mt_category_meta set category_meta_vclob=category_meta_vchar where category_meta_type ='show_fields'"
+                - "update mt_category_meta set category_meta_vchar = null where category_meta_type ='show_fields'"
+
+stylecatcher_libraries:
+    professional_themes:
+        label: Professional Styles
+        order: 100
+        description_label: A collection of styles compatible with Professional themes.
+        url: '{{static}}addons/Commercial.pack/themes/professional.html'
+
+themes:
+    professional_website:
+        id: professional_website
+        label: Professional Website
+        description: <__trans phrase="Professionally designed, well-structured and easily adaptable web site. You can customize default pages, footer and top navigation easily.">
+        author_name: Six Apart Ltd.
+        author_link: https://www.sixapart.com/
+        version: 1.11
+        class: website
+        static_path: static
+        l10n_class: MT::Commercial::L10N
+        thumbnail_file: thumb.png
+        thumbnail_file_medium: thumb-medium.png
+        thumbnail_file_small: thumb-small.png
+        elements:
+            default_pages:
+                component: core
+                importer: default_pages
+                name: Default Pages
+                data:
+                    about:
+                        basename: index
+                        title: About
+                        text: <__trans phrase="_PWT_ABOUT_BODY">
+                        tags: "@about"
+                        folder: about
+                    contact:
+                        basename: contact
+                        title: <__trans phrase="Contact">
+                        text: <__trans phrase="_PWT_CONTACT_BODY">
+                        tags: "@contact"
+                        folder: contact
+                    home:
+                        basename: home
+                        title: <__trans phrase="Welcome to our new website!">
+                        text: <__trans phrase="_PWT_HOME_BODY">
+                        tags: "@home"
+            template_set:
+                component: core
+                importer: template_set
+                name: Template Set
+                data:
+                    label: Professional Website
+                    base_path: templates/professional/website
+                    require: 1
+                    templates:
+                        index:
+                            main_index:
+                                label: Main Index
+                                outfile: index.html
+                                rebuild_me: 1
+                            blog_index:
+                                label: Blog Index
+                                outfile: blogs/index.html
+                                rebuild_me: 1
+                            archive_index:
+                                label: Archive Index
+                                outfile: archives.html
+                                rebuild_me: 1
+                            styles:
+                                label: Stylesheet
+                                outfile: styles.css
+                                rebuild_me: 1
+                            javascript:
+                                label: JavaScript
+                                outfile: mt.js
+                                rebuild_me: 1
+                            feed_recent:
+                                label: Feed - Recent Entries
+                                outfile: atom.xml
+                                rebuild_me: 1
+                            rsd:
+                                label: RSD
+                                outfile: rsd.xml
+                                rebuild_me: 1
+                        archive:
+                            entry_listing:
+                                label: Entry Listing
+                                mappings:
+                                    monthly:
+                                        archive_type: Monthly
+                                    category:
+                                        archive_type: Category
+                        individual:
+                            entry:
+                                label: Entry
+                                mappings:
+                                    entry_archive:
+                                        archive_type: Individual
+                        page:
+                            page:
+                                label: Page
+                                mappings:
+                                    page_archive:
+                                        archive_type: Page
+                        module:
+                            header:
+                                label: Header
+                            footer:
+                                label: Footer
+                            navigation:
+                                label: Navigation
+                            categories:
+                                label: Categories
+                            comment_detail:
+                                label: Comment Detail
+                            comment_form:
+                                label: Comment Form
+                            comments:
+                                label: Comments
+                            entry_detail:
+                                label: Entry Detail
+                            entry_metadata:
+                                label: Entry Metadata
+                            entry_summary:
+                                label: Entry Summary
+                            page_detail:
+                                label: Page Detail
+                            sidebar:
+                                label: Sidebar
+                            tags:
+                                label: Tags
+                            trackbacks:
+                                label: TrackBacks
+                            signin:
+                                label: Sign In
+                            search:
+                                label: Search
+                            footer_links:
+                                label: Footer Links
+                            powered_by_footer:
+                                label: Powered By (Footer)
+                        system:
+                            comment_listing:
+                                label: Comment Listing
+                                description: Improved listing of comments.
+                            comment_preview:
+                                label: Comment Preview
+                            comment_response:
+                                label: Comment Response
+                            dynamic_error:
+                                label: Dynamic Error
+                            popup_image:
+                                label: Popup Image
+                            search_results:
+                                label: Search Results
+                            cd_search_results:
+                                label: Search Results for Content Data
+                        widget:
+                            blogs:
+                                label: Blogs
+                            recent_entries_expanded:
+                                label: Recent Entries Expanded
+                            syndication:
+                                label: Syndication
+                            tag_cloud:
+                                label: Tag Cloud
+                            pages_list:
+                                label: Page Listing
+                            openid:
+                                label: OpenID Accepted
+                        widgetset:
+                            main_sidebar:
+                                order: 1000
+                                label: Main Sidebar
+                                widgets:
+                                    - Blogs
+                                    - Tag Cloud
+                            blog_activity:
+                                order: 1000
+                                label: Blog Activity
+                                widgets:
+                                    - Recent Entries Expanded
+                                    - OpenID Accepted
+                                    - Syndication
+
+    professional_blog:
+        id: professional_blog
+        label: Professional Blog
+        description: <__trans phrase="Create a blog as a part of structured website. This works best with Professional Website theme.">
+        author_name: Six Apart Ltd.
+        author_link: https://www.sixapart.com/
+        version: 1.11
+        class: blog
+        static_path: static
+        l10n_class: MT::Commercial::L10N
+        thumbnail_file: thumb.png
+        thumbnail_file_medium: thumb-medium.png
+        thumbnail_file_small: thumb-small.png
+        elements:
+            template_set:
+                component: core
+                importer: template_set
+                name: Template Set
+                data:
+                    label: Professional Blog
+                    base_path: templates/professional/blog
+                    require: 1
+                    templates:
+                        index:
+                            main_index:
+                                label: Main Index
+                                outfile: index.html
+                                rebuild_me: 1
+                            archive_index:
+                                label: Archive Index
+                                outfile: archives.html
+                                rebuild_me: 1
+                            styles:
+                                label: Stylesheet
+                                outfile: styles.css
+                                rebuild_me: 1
+                            javascript:
+                                label: JavaScript
+                                outfile: mt.js
+                                rebuild_me: 1
+                            feed_recent:
+                                label: Feed - Recent Entries
+                                outfile: atom.xml
+                                rebuild_me: 1
+                            rsd:
+                                label: RSD
+                                outfile: rsd.xml
+                                rebuild_me: 1
+                        archive:
+                            entry_listing:
+                                label: Entry Listing
+                                mappings:
+                                    monthly:
+                                        archive_type: Monthly
+                                    category:
+                                        archive_type: Category
+                        individual:
+                            entry:
+                                label: Entry
+                                mappings:
+                                    entry_archive:
+                                        archive_type: Individual
+                        page:
+                            page:
+                                label: Page
+                                mappings:
+                                    page_archive:
+                                        archive_type: Page
+                        module:
+                            header:
+                                label: Header
+                            footer:
+                                label: Footer
+                            navigation:
+                                label: Navigation
+                            categories:
+                                label: Categories
+                            comment_detail:
+                                label: Comment Detail
+                            comment_form:
+                                label: Comment Form
+                            comments:
+                                label: Comments
+                            entry_detail:
+                                label: Entry Detail
+                            entry_metadata:
+                                label: Entry Metadata
+                            entry_summary:
+                                label: Entry Summary
+                            page_detail:
+                                label: Page Detail
+                            sidebar:
+                                label: Sidebar
+                            tags:
+                                label: Tags
+                            trackbacks:
+                                label: TrackBacks
+                            signin:
+                                label: Sign In
+                            search:
+                                label: Search
+                            footer_links:
+                                label: Footer Links
+                            powered_by_footer:
+                                label: Powered By (Footer)
+                        system:
+                            comment_listing:
+                                label: Comment Listing
+                                description: Improved listing of comments.
+                            comment_preview:
+                                label: Comment Preview
+                            comment_response:
+                                label: Comment Response
+                            dynamic_error:
+                                label: Dynamic Error
+                            popup_image:
+                                label: Popup Image
+                            search_results:
+                                label: Search Results
+                            cd_search_results:
+                                label: Search Results for Content Data
+                        widget:
+                            about_this_page:
+                                label: About This Page
+                            archive_widgets_group:
+                                label: Archive Widgets Group
+                            author_archive_list:
+                                label: Author Archives
+                            calendar:
+                                label: Calendar
+                            category_archive_list:
+                                label: Category Archives
+                            creative_commons:
+                                label: Creative Commons
+                            current_author_monthly_archive_list:
+                                label: Current Author Monthly Archives
+                            current_category_monthly_archive_list:
+                                label: Current Category Monthly Archives
+                            date_based_author_archives:
+                                label: Date-Based Author Archives
+                            date_based_category_archives:
+                                label: Date-Based Category Archives
+                            main_index_widgets_group:
+                                label: Home Page Widgets Group
+                            monthly_archive_dropdown:
+                                label: Monthly Archives Dropdown
+                            monthly_archive_list:
+                                label: Monthly Archives
+                            pages_list:
+                                label: Page Listing
+                            recent_entries:
+                                label: Recent Entries
+                            recent_assets:
+                                label: Recent Assets
+                            recent_comments:
+                                label: Recent Comments
+                            syndication:
+                                label: Syndication
+                            tag_cloud:
+                                label: Tag Cloud
+                            openid:
+                                label: OpenID Accepted
+                        widgetset:
+                            blog_activity:
+                                order: 1000
+                                label: Blog Activity
+                                widgets:
+                                    - About This Page
+                                    - Home Page Widgets Group
+                            blog_archives:
+                                order: 1000
+                                label: Blog Archives
+                                widgets:
+                                    - Archive Widgets Group
+                                    - OpenID Accepted
+                                    - Syndication
+

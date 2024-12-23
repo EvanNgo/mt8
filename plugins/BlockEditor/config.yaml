@@ -1,0 +1,75 @@
+id: BlockEditor
+name: BlockEditor
+version: 1.11
+author_link: http://www.movabletype.org/
+author_name: Six Apart Ltd.
+description: <MT_TRANS phrase="Block Editor.">
+l10n_class: BlockEditor::L10N
+schema_version: 1
+
+text_filters:
+    blockeditor:
+        label: 'Block Editor'
+        condition: |
+          sub {
+            my $app = MT->instance;
+            my $type = $app->param('_type') or return 0;
+            if( $type eq 'content_data' ){
+              return 1;
+            }
+            return 0;
+          }
+
+content_field_types:
+  multi_line_text:
+    field_html: cms/field_html/field_html_multi_line_text.tmpl
+    field_html_params: $BlockEditor::BlockEditor::App::field_html_params
+    data_load_handler: $BlockEditor::BlockEditor::App::data_load_handler
+    replace_handler: $BlockEditor::BlockEditor::App::replace_handler
+    search_handler: $BlockEditor::BlockEditor::App::search_handler
+
+applications:
+  cms:
+    methods:
+      blockeditor_dialog_list_asset: $BlockEditor::BlockEditor::BlockEditorFieldType::Image::dialog_list_asset
+      blockeditor_dialog_insert_options: $BlockEditor::BlockEditor::BlockEditorFieldType::Image::dialog_insert_options
+      blockeditor_dialog_insert_asset: $BlockEditor::BlockEditor::BlockEditorFieldType::Image::dialog_insert_asset
+      blockeditor_delete_asset: $BlockEditor::BlockEditor::BlockEditorFieldType::Image::delete
+
+    callbacks:
+      template_param.edit_content_data: $BlockEditor::BlockEditor::App::template_param_edit_content_data
+      cms_pre_save.content_data: $BlockEditor::BlockEditor::App::pre_save_content_data
+
+blockeditor_fields:
+  header:
+    order: 10
+  text:
+    order: 20
+  embed:
+    order: 30
+  image:
+    order: 40
+  horizon:
+    order: 50
+
+callbacks:
+    MT::Upgrade::upgrade_end: |
+        sub {
+            my ( $cb, $self, %param ) = @_;
+            # explicitly enabled or disabled
+            return 1 if do {
+                my $cfg = MT->model('config')->load(1);
+                $cfg
+                    && $cfg->data =~ /PluginSchemaVersion BlockEditor=/i
+                    && $cfg->data =~ /PluginSwitch BlockEditor=/i;
+            };
+
+            # enabled by upgrade
+            return 1 if $param{from};
+
+            # disable by install
+            my $cfg = MT->config;
+            $cfg->PluginSwitch( 'BlockEditor=0', 1 );
+            $cfg->PluginSchemaVersion('blockeditor=1', 1);
+            $cfg->save_config;
+        }

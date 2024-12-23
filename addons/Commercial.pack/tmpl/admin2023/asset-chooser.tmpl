@@ -1,0 +1,63 @@
+<mt:if name="is_cms">
+<mt:unless name="asset_chooser_js">
+    <script type="text/javascript">
+    <!--
+        function insertCustomFieldAsset(html, id, preview_html) {
+            getByID(id).value = html;
+            if ( !preview_html )
+                preview_html = html ? html : '';
+
+            try {
+                /* remove the form enclosure from the preview */
+                var enc = document.createElement( "div" );
+                enc.innerHTML = preview_html;
+                var form = enc.getElementsByTagName( "form" )[ 0 ];
+                getByID(id + '_preview').innerHTML = form ? form.innerHTML : preview_html;
+            } catch(e) {
+                log.error(e);
+            };
+
+            var remove_button = getByID(id + '_remove_asset');
+            if (remove_button && html) {
+                jQuery('#' + id + '_remove_asset').show();
+            }
+            else if (remove_button) {
+                jQuery('#' + id + '_remove_asset').hide();
+            }
+        }
+    //-->
+    </script>
+    <mt:setvar name="asset_chooser_js" value="1">
+</mt:unless>
+
+<input name="<mt:var name="field_name" escape="html">" id="<mt:var name="field_id" escape="html">" style="display: none;" value="<mt:var name="value" escape="html">" />
+
+<div id="<mt:var name="field_id">_preview" class="customfield_preview">
+    <mt:if name="asset_type" eq="image">
+    <mt:if name="have_thumbnail">
+    <a href="<mt:asseturl>" target="_blank" title="<__trans phrase="View image">"><img src="<mt:assetthumbnailurl height="240" width="240">" alt="" /></a>
+    <mt:else>
+      <mt:if tag="asseturl"><a href="<mt:asseturl>" target="_blank" title="<__trans phrase="View image">"><mt:var name="value" remove_html="1"></a><mt:else><mt:var name="value" remove_html="1"></mt:if>
+    </mt:if>
+    <mt:else>
+      <mt:if tag="asseturl"><a href="<mt:asseturl>" target="_blank" title="<__trans phrase="View">"><mt:var name="value" remove_html="1"></a><mt:else><mt:var name="value" remove_html="1"></mt:if>
+    </mt:if>
+</div>
+
+<div class="actions-bar" style="clear: none;">
+    <div class="actions-bar-inner pkg actions">
+        <a href="<mt:var name="script_url">?__mode=list_asset&amp;_type=asset&amp;blog_id=<mt:var name="blog_id">&amp;dialog_view=1&amp;<mt:if name="asset_type" ne="asset">filter=class&amp;filter_val=<mt:var name="asset_type">&amp;require_type=<mt:var name="asset_type">&amp;</mt:if>edit_field=<mt:var name="field_id">&amp;asset_select=1" class="mt-open-dialog mt-modal-open" data-mt-modal-large>
+          <__trans phrase="Choose [_1]" params="<mt:var name="asset_type_label">">
+        </a>
+        <mt:unless var="required">
+        <a href="#" id="<mt:var name="field_id" escape="html">_remove_asset"
+            <mt:unless var="value">style="display: none;"</mt:unless>
+            onclick="insertCustomFieldAsset('', '<mt:var name="field_id" escape="JS">'); return false;"
+            ><__trans phrase="Remove [_1]" params="<mt:var name="asset_type_label">"></a>
+        </mt:unless>
+    </div>
+</div>
+<mt:else>
+        <input type="file" name="file_<mt:var name="field_name">" id="entry-file" class="fi" />
+        <input type="hidden" name="type_<mt:var name="field_name">" value="<mt:var name="asset_type">" />
+</mt:if>

@@ -1,0 +1,15 @@
+<__trans_section component="commercial">
+<$mt:Var name="page_layout" value="layout-wm"$>
+<$mt:Var name="page_title" value="<__trans phrase="Blogs">"$>
+<mt:SetVarBlock name="title"><$mt:WebsiteName encode_html="1"$></mt:SetVarBlock>
+
+<$mt:Include module="<__trans phrase="Header">"$>
+
+<h1 id="page-title" class="archive-title"><$mt:Var name="page_title"$></h1>
+
+<mt:Entries include_blogs="children">
+    <$mt:Include module="<__trans phrase="Entry Summary">"$>
+</mt:Entries>
+
+<$mt:Include module="<__trans phrase="Footer">"$>
+</__trans_section>

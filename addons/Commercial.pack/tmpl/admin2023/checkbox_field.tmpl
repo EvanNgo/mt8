@@ -1,0 +1,9 @@
+<mt:if name="is_cms">
+  <input type="hidden" name="<mt:var name="field_name" escape="html">_cb_beacon" value="1" />
+  <div class="form-check hint">
+    <input type="checkbox" name="<mt:var name="field_name" escape="html">" value="1" id="<mt:var name="field_id">"<mt:if name="field_value"> checked="checked"</mt:if> class="form-check-input cb" />
+    <label class="form-check-label" for="<mt:var name="field_id" escape="html">"><mt:var name="description" escape="html"></label>
+  </div>
+<mt:else>
+  <input type="hidden" name="<mt:var name="field_name" escape="html">_cb_beacon" value="1" /><input type="checkbox" name="<mt:var name="field_name" escape="html">" value="1" id="<mt:var name="field_id">"<mt:if name="field_value"> checked="checked"</mt:if> class="cb" /> <label class="hint" for="<mt:var name="field_id" escape="html">"><mt:var name="description" escape="html"></label>
+</mt:if>

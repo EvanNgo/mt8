@@ -1,0 +1,13 @@
+<div class="asset-meta">
+    <span class="byline">
+<mt:If tag="EntryAuthorDisplayName">
+        <__trans phrase="By [_1] on [_2]" params="<span class="vcard author"><$mt:EntryAuthorLink show_hcard="1"$></span>%%<abbr class="published" title="<$mt:EntryDate format_name="iso8601"$>"><$mt:EntryDate format="%x %X"$></abbr>">
+<mt:Else>
+        <abbr class="published" title="<$mt:EntryDate format_name="iso8601"$>"><$mt:EntryDate format="%x %X"$></abbr>
+</mt:If>
+    </span>
+<mt:Unless name="hide_counts" eq="1">
+    <mt:IfCommentsActive><span class="separator">|</span> <a href="<$mt:EntryPermalink$>#comments"><$mt:EntryCommentCount singular="<__trans phrase="1 Comment">" plural="<__trans phrase="# Comments">"$></a></mt:IfCommentsActive>
+    <mt:IfPingsActive><span class="separator">|</span> <a href="<$mt:EntryPermalink$>#trackbacks"><$mt:EntryTrackbackCount singular="<__trans phrase="1 TrackBack">" plural="<__trans phrase="# TrackBacks">"$></a></mt:IfPingsActive>
+</mt:Unless>
+</div>

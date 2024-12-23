@@ -1,0 +1,85 @@
+<mt:setvarblock name="page_title"><__trans phrase="Configure the authentication device"></mt:setvarblock>
+
+<mt:setvarblock name="js_include" append="1">
+<script src="<$mt:var name="static_uri"$>plugins/MFA-TOTP/dist/enable_dialog.min.js?v=<mt:Var name="plugin_version" />" type="module"></script>
+</mt:setvarblock>
+<mt:setvarblock name="html_head" append="1">
+<style type="text/css">
+/* Deviating from the rules of the Style Guide, here the modal window does not display scrollbars */
+div.modal-body {
+  max-height: none !important;
+}
+</style>
+</mt:setvarblock>
+
+<mt:setvarblock name="modal_body">
+
+<div class="row"><div class="col-12"><div class="alert alert-danger d-none" role="alert">
+<p></p>
+<ul>
+  <li><__trans phrase="If you have already registered this Movable Type account on your authentication device, please delete it and re-register."></li>
+  <li><__trans phrase="Please make sure that the time setting on the authentication device is correct."></li>
+</ul>
+</div></div></div>
+
+<form data-mt-mfa-totp-close-modal-message="<__trans phrase="Are you sure you want to close the modal window, although the configuration of the authentication device is not complete?">">
+
+<p><__trans phrase='Scan the QR code to register your account with your authentication device and enter the [_1]-digit security token displayed.' params="<$mt:var name="totp_digits"$>"></p>
+
+<div style="text-align: center">
+    <canvas data-totp-uri="<mt:var name="totp_uri" encode_html="1">" />
+</div>
+    
+<mtapp:setting
+  id="mfa-totp-token"
+  label="<__trans phrase="Security token">"
+  label_for="mfa-totp-token">
+  <div class="form-row align-items-center">
+  <div class="col-6 col-md-3">
+    <input type="text" name="mfa_totp_token" id="mfa-totp-token" class="form-control text password" autocomplete="new-password" />
+  </div>
+  </div>
+</mtapp:setting>
+<input type="hidden" id="magic-token" value="<$mt:var name="magic_token"$>" />
+
+</form>
+
+<div id="completed-panel" class="d-none">
+  <p><__trans phrase="The setup is complete."></p>
+
+  <div id="recovery-codes" class="d-none">
+    <p><__trans phrase="If you lose access to your authentication device, you can use the following recovery code to authenticate."></p>
+    <pre class="card bg-light mb-2 p-3"><code></code></pre>
+    <a id="download-recovery-codes" download="movable-type-recovery-codes.txt"><__trans phrase="Download recovery codes"></a>
+  </div>
+</div>
+
+</mt:setvarblock>
+
+<mt:setvarblock name="action_buttons">
+  <a id="cancel" class="modal-cancel" data-mt-modal-close><__trans phrase="Cancel"></a>
+
+  <button
+    id="continue"
+    type="button"
+    accesskey="s"
+    class="cancel action button mt-close-dialog btn btn-primary"
+    title="<__trans phrase="Continue (s)">"
+    disabled>
+    <__trans phrase="Continue">
+  </button>
+
+  <button
+    id="finish"
+    type="button"
+    accesskey="s"
+    class="cancel action button mt-close-dialog btn btn-primary d-none"
+    title="<__trans phrase="Finish (s)">"
+    data-mt-modal-close
+    disabled>
+    <__trans phrase="Finish">
+  </button>
+</mt:setvarblock>
+
+<mt:include name="layout/modal.tmpl">
+<mt:var name="layout">

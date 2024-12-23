@@ -1,0 +1,120 @@
+<mt:if name="is_cms">
+        <div class="row align-items-center date-time-fields">
+<mt:if var name="options" ne="time">
+          <div class="col ps-0 pe-3 d-none d-md-block">
+            <input type="text" id="d_<mt:var name="field_name" escape="html">" class="form-control entry-date text-date" name="d_<mt:var name="field_name" escape="html">" value="<mt:var name="date" escape="html">" placeholder="YYYY-MM-DD" />
+          </div>
+          <div class="col-12 form-inline d-md-none<mt:if name="options" ne="time"><mt:if name="options" ne="date"> mb-2</mt:if></mt:if>">
+            <input type="number" id="dy_<mt:var name="field_name" escape="html">" class="date-field-year form-control html5-form w-25" name="dy_<mt:var name="field_name" escape="html">" value="<mt:var name="year">" maxlength="4">
+            -
+            <select id="dm_<mt:var name="field_name" escape="html">" class="date-field-month form-select w-25" name="dm_<mt:var name="field_name" escape="html">">
+              <option value=""></option>
+              <mt:for var="x" from="1" to="12">  <mt:setvarblock name="y"><mt:if name="x" lt="10">0</mt:if><mt:var name="x"></mt:setvarblock><mt:if name="y" eq="$month"><option value="<mt:var name="y">" selected="selected"><mt:var name="y"></option><mt:else><option value="<mt:var name="y">"><mt:var name="y"></option></mt:if>
+              </mt:for></select>
+            -
+            <select id="dd_<mt:var name="field_name" escape="html">" class="date-field-day form-select w-25" name="dd_<mt:var name="field_name" escape="html">">
+              <option value=""></option>
+              <mt:for var="x" from="1" to="31">  <mt:setvarblock name="y"><mt:if name="x" lt="10">0</mt:if><mt:var name="x"></mt:setvarblock><mt:if name="y" eq="$day"><option value="<mt:var name="y">" selected="selected"><mt:var name="y"></option><mt:else><option value="<mt:var name="y">"><mt:var name="y"></option></mt:if>
+              </mt:for></select>
+          </div>
+<mt:else>
+          <input type="hidden" id="d_<mt:var name="field_name" escape="html">" name="d_<mt:var name="field_name" escape="html">" value="" />
+          <input type="hidden" id="dy_<mt:var name="field_name" escape="html">" name="dy_<mt:var name="field_name" escape="html">" value="" />
+          <input type="hidden" id="dm_<mt:var name="field_name" escape="html">" name="dm_<mt:var name="field_name" escape="html">" value="" />
+          <input type="hidden" id="dd_<mt:var name="field_name" escape="html">" name="dd_<mt:var name="field_name" escape="html">" value="" />
+</mt:if>
+<mt:if var name="options" ne="date">
+          <div class="col p-0 d-none d-md-block">
+            <input type="text" class="form-control entry-time" name="t_<mt:var name="field_name" escape="html">" value="<$mt:var name="time" escape="html"$>" placeholder="HH:mm:ss" />
+          </div>
+          <div class="col-12 form-inline d-md-none">
+            <select id="th_<mt:var name="field_name" escape="html">" class="time-field-hour form-select w-25" name="th_<mt:var name="field_name" escape="html">">
+              <option value=""></option>
+              <mt:for var="x" from="0" to="23">  <mt:setvarblock name="y"><mt:if name="x" lt="10">0</mt:if><mt:var name="x"></mt:setvarblock><mt:if name="y" eq="$hour"><option value="<mt:var name="y">" selected="selected"><mt:var name="y"></option><mt:else><option value="<mt:var name="y">"><mt:var name="y"></option></mt:if>
+              </mt:for></select>
+            :
+            <select id="tm_<mt:var name="field_name" escape="html">" class="time-field-minute form-select w-25" name="tm_<mt:var name="field_name" escape="html">">
+              <option value=""></option>
+              <mt:for var="x" from="0" to="59">  <mt:setvarblock name="y"><mt:if name="x" lt="10">0</mt:if><mt:var name="x"></mt:setvarblock><mt:if name="y" eq="$minute"><option value="<mt:var name="y">" selected="selected"><mt:var name="y"></option><mt:else><option value="<mt:var name="y">"><mt:var name="y"></option></mt:if>
+              </mt:for></select>
+            :
+            <select id="ts_<mt:var name="field_name" escape="html">" class="time-field-second form-select w-25" name="ts_<mt:var name="field_name" escape="html">">
+              <option value=""></option>
+              <mt:for var="x" from="0" to="59">  <mt:setvarblock name="y"><mt:if name="x" lt="10">0</mt:if><mt:var name="x"></mt:setvarblock><mt:if name="y" eq="$second"><option value="<mt:var name="y">" selected="selected"><mt:var name="y"></option><mt:else><option value="<mt:var name="y">"><mt:var name="y"></option></mt:if>
+              </mt:for></select>
+          </div>
+<mt:else>
+          <input type="hidden" id="t_<mt:var name="field_name" escape="html">" name="t_<mt:var name="field_name" escape="html">" value="" />
+          <input type="hidden" id="th_<mt:var name="field_name" escape="html">" name="th_<mt:var name="field_name" escape="html">" value="" />
+          <input type="hidden" id="tm_<mt:var name="field_name" escape="html">" name="tm_<mt:var name="field_name" escape="html">" value="" />
+          <input type="hidden" id="ts_<mt:var name="field_name" escape="html">" name="ts_<mt:var name="field_name" escape="html">" value="" />
+</mt:if>
+        </div>
+
+        <script>
+jQuery(function () {
+  function getInputMobileView() {
+    var $dateField = jQuery('#d_<mt:var name="field_name" escape="js">');
+    var $form = $dateField.parents('form');
+    var $inputMobileView = $form.find('input[name=mobile_view]');
+    if ($inputMobileView.length == 0) {
+      $inputMobileView = jQuery('<input name="mobile_view" />');
+      $form.append($inputMobileView);
+    }
+    return $inputMobileView;
+  }
+
+  jQuery(window).on('change_to_mobile_view', function () {
+    getInputMobileView().val('1');
+
+    var date = jQuery('#d_<mt:var name="field_name" escape="js">').val();
+    var year, month, day;
+    [year, month, day] = date.split('-');
+    jQuery('#dy_<mt:var name="field_name" escape="js">').val(year);
+    jQuery('#dm_<mt:var name="field_name" escape="js">').val(month);
+    jQuery('#dd_<mt:var name="field_name" escape="js">').val(day);
+
+    var time = jQuery('#t_<mt:var name="field_name" escape="js">').val();
+    var hour, minute, second;
+    [hour, minute, second] = time.split(':');
+    jQuery('#th_<mt:var name="field_name" escape="js">').val(hour);
+    jQuery('#tm_<mt:var name="field_name" escape="js">').val(minute);
+    jQuery('#ts_<mt:var name="field_name" escape="html">').val(second);
+  });
+  jQuery(window).on('change_to_pc_view', function () {
+    getInputMobileView().val('');
+
+    var year = jQuery('#dy_<mt:var name="field_name" escape="js">').val();
+    var month = jQuery('#dm_<mt:var name="field_name" escape="js">').val();
+    var day = jQuery('#dd_<mt:var name="field_name" escape="js">').val();
+    var date;
+    if (year || month || day) {
+      date = [year, month, day].join('-');
+      jQuery('#d_<mt:var name="field_name" escape="js">').val(date);
+    }
+
+    var hour = jQuery('#th_<mt:var name="field_name" escape="js">').val();
+    var minute = jQuery('#tm_<mt:var name="field_name" escape="js">').val();
+    var second = jQuery('#ts_<mt:var name="field_name" escape="js">').val();
+    var time;
+    if (hour || minute || second) {
+      time = [hour, minute, second].join(':');
+      jQuery('#t_<mt:var name="field_name" escape="js">').val(time);
+    }
+  });
+});
+        </script>
+<mt:else>
+        <span class="date-time-fields">
+<mt:if var name="options" ne="time">
+            <input type="text" id="d_<mt:var name="field_name" escape="html">" class="entry-date text-date" name="d_<mt:var name="field_name" escape="html">" value="<mt:var name="date" escape="html">" placeholder="YYYY-MM-DD" />
+<mt:else>
+            <input type="hidden" id="d_<mt:var name="field_name" escape="html">" name="d_<mt:var name="field_name" escape="html">" value="" />
+</mt:if>
+<mt:if var name="options" ne="date">
+            <input type="text" class="entry-time" name="t_<mt:var name="field_name" escape="html">" value="<mt:var name="time" escape="html">" placeholder="HH:mm:ss" />
+<mt:else>
+            <input type="hidden" id="t_<mt:var name="field_name" escape="html">" name="t_<mt:var name="field_name" escape="html">" value="" />
+</mt:if>
+        </span>
+</mt:if>

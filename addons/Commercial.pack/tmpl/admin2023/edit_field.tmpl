@@ -1,0 +1,442 @@
+<__trans_section component="Commercial">
+<mt:if name="id">
+  <mt:setvarblock name="page_title"><__trans phrase="Edit Custom Field"></mt:setvarblock>
+<mt:else>
+  <mt:setvar name="page_title" value="<__trans phrase="Create Custom Field">">
+  <mt:setvar name="new_object" value="1">
+</mt:if>
+<mt:setvar name="screen_id" value="edit_field">
+<mt:setvar name="position_actions_bottom" value="1">
+
+<mt:setvarblock name="system_msg">
+<mt:if name="saved">
+  <mtapp:statusmsg
+     id="saved"
+     class="success"
+     can_close="1">
+    <__trans phrase="Your changes have been saved.">
+  </mtapp:statusmsg>
+</mt:if>
+<mt:if name="saved_deleted">
+  <mtapp:statusmsg
+     id="saved-deleted"
+     class="success"
+     can_close="1">
+    <__trans phrase="The selected field(s) has been deleted from the database.">
+  </mtapp:statusmsg>
+</mt:if>
+<mt:if name="error">
+  <mtapp:statusmsg
+     id="generic-error"
+     class="error"
+     can_close="0">
+    <mt:var name="error" escape="html">
+  </mtapp:statusmsg>
+</mt:if>
+<mtapp:statusmsg
+   id="blank-fields"
+   class="error"
+   can_close="0"
+   hidden="1">
+  <__trans phrase="You must enter information into the required fields highlighted below before the custom field can be created.">
+</mtapp:statusmsg>
+</mt:setvarblock>
+
+<mt:setvarblock name="html_head">
+<link rel="stylesheet" href="<mt:var name="static_uri">addons/Commercial.pack/styles-customfields.css?v=<mt:var name="mt_version_id" escape="URL">" type="text/css" media="screen" title="CustomFields Stylesheet" charset="utf-8" />
+<script type="text/javascript">
+<!--
+    var customfield_types_loop = <mt:var name="customfield_types_loop" to_json="1">
+
+    function htmlEscape( val ) {
+      return val.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    function toggleClassName(el, cn) {
+        if (DOM.hasClassName(el, cn))
+            DOM.removeClassName(el, cn);
+        else
+            DOM.addClassName(el, cn);
+    }
+
+    function toggleCode(el) {
+        var name = htmlEscape( getByID('name').value );
+        var $code = jQuery('#code');
+        var tag = htmlEscape( getByID('tag').value );
+        var text = '<' + 'mt:If tag="' + tag + '">' + "\n" + name + ': <' + 'mt:' + tag + '>' + "\n" + '<' + '/mt:If>';
+        $code.find('code').text(text);
+
+        var opt = getByID(el);
+        if (opt) {
+            toggleClassName(opt, 'active');
+        }
+    }
+
+    function toggleFile() {
+        var fld = getByID("basename");
+        if (fld) {
+            fld.disabled = false;
+            fld.focus();
+            var baseman = getByID("basename_manual");
+            if (baseman) baseman.value = "1";
+            var basewarn = getByID("basename-warning");
+            if (basewarn) basewarn.style.display = "block";
+        }
+        var img = getByID("basename-lock");
+        if (img)
+            img.style.display = 'none';
+        return false;
+    }
+
+    function rebasename(title) {
+        if (!orig_basename) {
+            dir_title = dirify(title.value);
+            dir_title = dir_title.substring(0, <$mt:var name="basename_limit"$>);
+            trimmed = dir_title.match(/^(.*[^_])/);
+            if (trimmed && trimmed.length) {
+                setElementValue('basename', trimmed[0]);
+            } else {
+                setElementValue('basename', '');
+            }
+        }
+    }
+
+    function capitalizeMe(val) {
+            newVal = '';
+            val = val.split(' ');
+            for(var c=0; c < val.length; c++) {
+                    newVal += val[c].substring(0,1).toUpperCase() +
+                    val[c].substring(1,val[c].length);
+            }
+            return newVal.replace(/^\s+/g, '').replace(/\s+$/g, '');
+    }
+
+    var cloneTypes;
+    function changeTypeByObject() {
+<mt:unless name="id">
+       var obj = jQuery('#obj_type');
+       if ( obj[0].value == 'comment' ) {
+           if (!cloneTypes) {
+               cloneTypes = jQuery('.cf-type-asset').clone();
+               jQuery('.cf-type-asset').remove();
+           }
+       } else {
+           if (cloneTypes) {
+               jQuery('#type').append(cloneTypes);
+               cloneTypes = null;
+           }
+       }
+</mt:unless>
+    }
+
+    function changeName(t) {
+        <mt:unless name="id">
+        var opt = getByID('tag');
+        var name = dirify(getByID('name').value);
+        name = name.replace(/-/g, '');
+        var tag = getByID('tag').value;
+        var obj_type = getByID('obj_type').value;
+
+        if(!t)
+            tag = getByID('tag').value = capitalizeMe(obj_type) + 'Data' + capitalizeMe(name);
+        </mt:unless>
+    }
+
+    function changeType(s) {
+        if(!s)
+            s = document.getElementById('type');
+
+        <mt:if name="new_object">
+        var type_key = s.options[s.selectedIndex].value;
+        <mt:else>
+        var type_key = s.value;
+        </mt:if>
+
+        var type_obj;
+        for (var i = 0; i < customfield_types_loop.length; i++) {
+            if(customfield_types_loop[i].key == type_key) {
+                type_obj = customfield_types_loop[i];
+                break;
+            }
+        }
+
+        if(!type_obj)
+            return;
+
+        // Set options_field
+        if(type_obj.options_field) {
+            show('options-field');
+            var optField = DOM.getElementsByClassName(getByID('options-field'), 'field-content')[0];
+            optField.innerHTML = type_obj.options_field;
+        } else {
+            hide('options-field');
+        }
+
+        // Set default_field
+        if(type_obj.default_field) {
+            show('default-field');
+            var optField = DOM.getElementsByClassName(getByID('default-field'), 'field-content')[0];
+
+            // If it's got some options that can be set, the default will need to be set after a save
+            if(!type_obj.options_field || "<mt:var name="type" escape="js">" == type_key) {
+                hide('default-save');
+                optField.innerHTML = type_obj.default_field;
+            } else {
+                hide('default-field');
+                show('default-save');
+            }
+        } else {
+            hide('default-field');
+            hide('default-save');
+        }
+    }
+
+    function checkRequired(f) {
+        var fields = jQuery('div.mt-mainContent div.required :input:not(:button):visible')
+                         .map(function() {
+                             return this.id;
+                         });
+        var submit = true;
+        for (var i = 0; i < fields.length; i++) {
+            var field = document.getElementById(fields[i]);
+            if(!field.value || field.value == '') {
+                if(DOM.hasClassName(field.parentNode, 'textarea-wrapper'))
+                    field.parentNode.style.borderColor = '#FF0000';
+                else
+                    field.style.borderColor = '#FF0000';
+                field.focus();
+                submit = false;
+                jQuery('#blank-fields').show();
+            } else {
+                if(DOM.hasClassName(field.parentNode, 'textarea-wrapper'))
+                    field.parentNode.style.borderColor = '#DADADA';
+                else
+                    field.style.borderColor = '#DADADA';
+            }
+        }
+
+        return submit;
+    }
+
+    var orig_basename;
+
+    function init() {
+        changeType();
+        changeName();
+        var basename = getByID("basename");
+        var basename_old = getByID("basename_old");
+        var title = getByID("title");
+        if (basename) {
+            if (basename.value != '') {
+                <mt:if name="reedit">
+                toggleFile();
+                </mt:if>
+                orig_basename = basename.value;
+            }<mt:if name="reedit"> else {
+                <mt:if name="id">
+                basename.value = basename_old.value;
+                <mt:else>
+                basename.value = dirify(title.value);
+                </mt:if>
+            }</mt:if>
+            <mt:unless name="id">
+            basename.disabled = false;
+            </mt:unless>
+        }
+    }
+
+    TC.attachLoadEvent(init);
+//-->
+</script>
+</mt:setvarblock>
+
+<mt:setvarblock name="page_content">
+  <mtapp:statusmsg
+     id="default-save"
+     class="info">
+    <__trans phrase="You must save this custom field before setting a default value.">
+  </mtapp:statusmsg>
+
+<form method="post" action="<mt:var name="script_url">" onsubmit="return checkRequired(this);">
+  <input type="hidden" name="__mode" value="save" id="__mode" />
+  <input type="hidden" name="_type" value="field" />
+  <input type="hidden" name="blog_id" value="<mt:var name="blog_id" default="0">" />
+<mt:if name="id">
+  <input type="hidden" name="id" value="<mt:var name="id" escape="html">" />
+</mt:if>
+  <input type="hidden" name="magic_token" value="<mt:var name="magic_token">" id="magic_token" />
+  <input type="hidden" name="return_args" value="<mt:var name="return_args" escape="html">" id="return_args" />
+
+  <mtapp:setting
+     id="obj_type"
+     label="<__trans phrase="System Object">"
+     label_for="obj_type"
+     required="1"
+     hint="<__trans phrase="Choose the system object where this custom field should appear.">"
+     hint_id="systemObject"
+     show_hint="$new_object">
+  <mt:if name="id">
+    <mt:loop name="obj_type_loop">
+      <mt:if name="selected">
+    <input type="hidden" name="obj_type" id="obj_type" value="<mt:var name="obj_type">" />
+    <div><mt:var name="obj_type_label" escape="html"></div>
+      </mt:if>
+    </mt:loop>
+  <mt:else>
+    <select name="obj_type" id="obj_type" class="form-select" onchange="changeName(); changeTypeByObject()"<mt:if name="new_object"> aria-describedby="systemObject"</mt:if>>
+      <option value="">
+        <__trans phrase="Select...">
+      </option>
+    <mt:loop name="obj_type_loop">
+      <option value="<mt:var name="obj_type">"<mt:if name="selected"> selected="selected"</mt:if>>
+        <mt:var name="obj_type_label" escape="html">
+      </option>
+    </mt:loop>
+    </select>
+  </mt:if>
+  </mtapp:setting>
+
+  <mtapp:setting
+     id="name"
+     label="<__trans phrase="Name">"
+     label_for="name"
+     required="1">
+    <input type="text" name="name" value="<mt:var name="name" escape="html">" id="name" class="form-control text" onchange="rebasename(this); changeName();" />
+  </mtapp:setting>
+
+  <mtapp:setting
+     id="description"
+     label="<__trans phrase="Description">"
+     label_for="description">
+    <textarea id="description" name="description" class="form-control text low"><mt:var name="description" escape="html"></textarea>
+  </mtapp:setting>
+
+  <mtapp:setting
+     id="type"
+     label="<__trans phrase="Type">"
+     label_for="type"
+     required="1">
+  <mt:if name="id">
+    <mt:loop name="customfield_types_loop">
+      <mt:if name="type" eq="$key">
+    <input type="hidden" name="type" id="type" value="<mt:var name="key">" />
+    <div><mt:var name="label" escape="html"></div>
+      </mt:if>
+    </mt:loop>
+  <mt:else>
+    <select name="type" onchange="changeType(this);" id="type" class="form-select">
+    <mt:loop name="customfield_types_loop">
+      <mt:if name="show_column">
+      <option<mt:if name="asset_type"> class="cf-type-asset"</mt:if> value="<mt:var name="key">"<mt:if name="type" eq="$key"> selected="selected"</mt:if>><mt:var name="label" escape="html"></option>
+      </mt:if>
+    </mt:loop>
+    </select>
+  </mt:if>
+  </mtapp:setting>
+
+  <mtapp:setting
+     id="options"
+     label="<__trans phrase="Options">"
+     required="1">
+     <div class="field-content"></div>
+  </mtapp:setting>
+
+  <mtapp:setting
+     id="required"
+     label="<__trans phrase="Required?">">
+    <div class="mb-5">
+      <div class="form-check">
+        <input type="checkbox" id="required" name="required" class="form-check-input" value="1" id="required"<mt:if name="required"> checked="checked"</mt:if> />
+        <label class="form-check-label" for="required">
+          <__trans phrase="Must the user enter data into this custom field before the object may be saved?">
+        </label>
+      </div>
+    </div>
+  </mtapp:setting>
+
+  <mtapp:setting
+     id="default"
+     label="<__trans phrase="Default">">
+     <div class="field-content"></div>
+  </mtapp:setting>
+
+  <mtapp:setting
+     id="basename"
+     label="<__trans phrase="_CF_BASENAME">"
+     label_for="basename"
+     required="1"
+     hint='<__trans phrase="The basename must be unique within this [_1]." params="<mt:var name="level_label">">'
+     hint_id="basenameHelp"
+     show_hint="1">
+    <div class="mb-5">
+      <input type="hidden" name="basename_manual" id="basename_manual" value="0" />
+      <input type="hidden" name="basename_old" id="basename_old" value="<mt:if name="id"><mt:var name="basename_old" escape="html"></mt:if>" />
+      <input type="text" name="basename" id="basename" class="form-control text mt-edit-field<mt:if name="error"> show-input</mt:if>" maxlength="65" value="<mt:var name="basename" escape="html">" onchange="setElementValue('basename_manual', '1');" aria-describedby="basenameHelp" />
+      <p class="text-warning alert-warning-inline icon-left icon-warning" id="basename-warning" style="display: none;"><__trans phrase="Warning: Changing this field's basename may require changes to existing templates."></p>
+    </div>
+  </mtapp:setting>
+
+  <mtapp:setting
+     id="tag"
+     label="<__trans phrase="Template Tag">"
+     label_for="tag"
+     required="1">
+    <input type="text" name="tag" value="<mt:var name="tag" escape="html">" id="tag" class="form-control text" onkeyup="changeName(1);" />
+    <div id="example-tmplate-code">
+      <a href="#bottom" onclick="toggleCode('tag-field');" class="toggle-link icon-left icon-spinner"><__trans phrase="Example Template Code"></a>
+      <div class="card card-block bg-faded" id="code">
+        <pre class="pre-scrollable p-3 code"><code></code></pre>
+      </div>
+    </div>
+  </mtapp:setting>
+
+  <mt:if name="blog_id">
+    <mt:if name="categories">
+  <h3><mt:var name="container_label_plural"></h3>
+  <mtapp:setting
+     id="show_fields"
+     label='<__trans phrase="Show In These [_1]" params="<mt:var name="container_label_plural">">'>
+    <input type="hidden" name="container_type" value="<mt:var name="container_type">" />
+    <ul class="list-unstyled">
+    <mt:loop name="categories">
+      <li style="margin-left: <mt:var name="category_pixel_depth">px;">
+        <div class="mb-5">
+          <div class="form-check">
+            <input type="checkbox" name="show_field_<mt:var name="category_id">" id="category_<mt:var name="category_id">" class="form-check-input" value="1"<mt:if name="selected"> checked="checked"</mt:if> />
+            <label class="form-check-label" for="category_<mt:var name="category_id" escape="html">"><mt:var name="category_label" escape="html"></label>
+          </div>
+        </div>
+        <input type="hidden" name="selected_fields_<mt:var name="category_id">" value="<mt:var name="category_selected_fields" escape="html">" />
+      </li>
+    </mt:loop>
+    </ul>
+  </mtapp:setting>
+    </mt:if>
+  </mt:if>
+
+<mt:setvarblock name="action_buttons">
+  <button
+     type="submit"
+     accesskey="s"
+     title="<__trans phrase="Save this field (s)">"
+     class="save action primary button btn btn-primary">
+    <__trans phrase="Save">
+  </button>
+<mt:if name="id">
+  <button
+     onclick="doRemoveItems(this.form, '<__trans phrase="field">', '<__trans phrase="fields">', 'id', {'return_args' : '__mode=list&amp;_type=field&amp;blog_id=<mt:var name="blog_id">'})"
+     type="submit"
+     accesskey="x"
+     title="<__trans phrase="Delete this field (x)">"
+     class="delete action button btn btn-default">
+    <__trans phrase="Delete">
+  </button>
+</mt:if>
+</mt:setvarblock>
+<mt:include name="include/actions_bar.tmpl" bar_position="bottom" hide_pager="1" settings_bar="1">
+</form>
+</mt:setvarblock>
+
+<mt:include name="layout/default.tmpl">
+<mt:var name="layout">
+</__trans_section>

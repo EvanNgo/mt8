@@ -1,0 +1,12 @@
+<__trans_section component="commercial">
+<$mt:Var name="page_layout" value="layout-wtt"$>
+<mt:SetVarBlock name="title"><mt:IfBlog><$mt:BlogName encode_html="1"$> - </mt:IfBlog><mt:BlogParentWebsite><$mt:WebsiteName encode_html="1"$></mt:BlogParentWebsite></mt:SetVarBlock>
+
+<$mt:Include module="<__trans phrase="Header">" body_class="mt-main-index"$>
+
+<mt:Entries>
+    <$mt:Include module="<__trans phrase="Entry Summary">"$>
+</mt:Entries>
+
+<$mt:Include module="<__trans phrase="Footer">"$>
+</__trans_section>

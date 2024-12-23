@@ -1,0 +1,21 @@
+<__trans_section component="commercial">
+<mt:if name="show_fields_list">
+    <fieldset class="form-group">
+        <legend class="h3"><__trans phrase="Custom Fields"></legend>
+<mtapp:setting
+    id="show_fields"
+    label="<__trans phrase="Show These Fields">">
+    <ul class="list-unstyled">
+    <mt:loop name="show_fields_list">
+        <li>
+            <div class="custom-control custom-checkbox">
+                <input type="checkbox" name="show_field_<mt:var name="id">" id="<mt:var name="basename">" class="custom-control-input" value="1"<mt:if name="selected"> checked="checked"</mt:if> />
+                <label class="custom-control-label" for="<mt:var name="basename" escape="html">"><mt:var name="name" escape="html"></label>
+            </div>
+        </li>
+    </mt:loop>
+    </ul>
+</mtapp:setting>
+    </fieldset>
+</mt:if>
+</__trans_section>

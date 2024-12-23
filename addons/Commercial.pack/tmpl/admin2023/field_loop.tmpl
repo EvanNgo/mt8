@@ -1,0 +1,40 @@
+<mt:loop name="field_loop">
+    <mt:if name="__first__">
+        <!-- start-customfield_beacon -->
+        <input type="hidden" name="customfield_beacon" value="1" id="customfield_beacon" />
+        <script type="text/javascript">
+        /* <![CDATA[ */
+            function fill_upload_field(id, url, html) {
+                document.getElementById('customfield_' + id).value = url;
+                var preview = document.getElementById('preview_' + id);
+                if (!preview) return;
+                preview.innerHTML = html;
+                var img = preview.getElementsByTagName('img')[0];
+                if(img.width > 240) {
+                    var pct = 240 / img.width; 
+                    img.width = 240;
+                    img.height = Math.floor(pct * img.height);
+                }
+            }
+        /* ]]> */
+        </script>
+        <!-- end-customfield_beacon -->
+    </mt:if>
+
+    <mt:var name="name" escape="html" setvar="label_encoded">
+    <mt:var name="description" escape="html" setvar="desc_encoded">
+    <!-- start-customfield_<mt:var name="basename"> -->
+    <mtapp:setting
+        id="$field_id"
+        label="$label_encoded"
+        label_class="$label_class"
+        hint="$desc_encoded"
+        shown="$show_field"
+        content_class="$content_class"
+        show_hint="$show_hint"
+        required="$required">
+        <mt:var name="field_html">
+    </mtapp:setting>
+    <!-- end-customfield_<mt:var name="basename"> -->
+
+</mt:loop>

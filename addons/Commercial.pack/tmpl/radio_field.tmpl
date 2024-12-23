@@ -1,0 +1,18 @@
+<mt:if name="is_cms">
+  <ul class="list-unstyled custom-field-radio-list">
+  <mt:loop name="option_loop">
+    <li>
+      <div class="custom-control custom-radio">
+        <input type="radio" name="<mt:var name="field_name" escape="html">" value="<mt:var name="option" escape="html">" id="<mt:var name="field_id">_<mt:var name="__counter__">"<mt:if name="is_selected"> checked="checked"</mt:if> class="custom-control-input rb" />
+        <label class="custom-control-label" for="<mt:var name="field_id" escape="html">_<mt:var name="__counter__" escape="html">"><mt:var name="label" escape="html"></label>
+      </div>
+    </li>
+  </mt:loop>
+  </ul>
+<mt:else>
+  <ul class="custom-field-radio-list">
+  <mt:loop name="option_loop">
+    <li><input type="radio" name="<mt:var name="field_name" escape="html">" value="<mt:var name="option" escape="html">" id="<mt:var name="field_id">_<mt:var name="__counter__">"<mt:if name="is_selected"> checked="checked"</mt:if> class="rb" /> <label for="<mt:var name="field_id">_<mt:var name="__counter__">"><mt:var name="label" escape="html"></label></li>
+  </mt:loop>
+  </ul>
+</mt:if>

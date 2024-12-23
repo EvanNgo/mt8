@@ -1,0 +1,5 @@
+<select name="<mt:var name="field_name" escape="html">" id="<mt:var name="field_id">" class="<mt:if name="is_cms">custom-select form-control </mt:if>se" mt:watch-change="1">
+  <mt:loop name="option_loop">
+    <option value="<mt:var name="option" escape="html">"<mt:if name="is_selected"> selected="selected"</mt:if>><mt:var name="label" escape="html"></option>
+  </mt:loop>
+</select>

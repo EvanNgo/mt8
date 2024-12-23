@@ -1,0 +1,25 @@
+<__trans_section component="commercial">
+<$mt:EntryTrackbackData$>
+<div id="entry-<$mt:EntryID$>" class="entry-asset asset hentry">
+    <div class="asset-header">
+        <h2 class="asset-name entry-title"><a href="<$mt:EntryPermalink$>" rel="bookmark"><$mt:EntryTitle$></a></h2>
+        <$mt:Include module="<__trans phrase="Entry Metadata">" blog_id="$website_id"$>
+    </div>
+    <div class="asset-content entry-content">
+<mt:If tag="EntryBody">
+        <div class="asset-body">
+            <$mt:EntryBody$>
+        </div>
+</mt:If>
+<mt:IfTagSearch>
+        <$mt:Include module="<__trans phrase="Tags">" blog_id="$website_id"$>
+</mt:IfTagSearch>
+<mt:If tag="EntryMore" convert_breaks="0">
+        <div class="asset-more-link">
+            <__trans phrase="Continue reading <a href="[_1]" rel="bookmark">[_2]</a>." params="<$mt:EntryPermalink$>#more%%<$mt:EntryTitle$>">
+        </div>
+</mt:If>
+    </div>
+    <div class="asset-footer"></div>
+</div>
+</__trans_section>

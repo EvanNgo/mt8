@@ -1,0 +1,36 @@
+<mtapp:listing id="customfields" loop="fields" hide_pager="1" show_actions="0" type="fields">
+<mt:if __first__>
+  <thead>
+    <tr>
+      <th class="head cb">
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" id="id-head" name="id-head" value="all" class="custom-control-input select" />
+          <label class="custom-control-label" for="id-head"><span class="sr-only"><__trans phrase="Select All"></span></label>
+        </div>
+      </th>
+      <th class="head field-name primary"><span class="col-label"><__trans phrase="Name"></span></th>
+      <th class="head field-object"><span class="col-label"><__trans phrase="Object"></span></th>
+      <th class="head field-type"><span class="col-label"><__trans phrase="Type"></span></th>
+    </tr>
+  </thead>
+  <tbody>
+</mt:if>
+    <tr class="<mt:if name="__odd__">odd<mt:else>even</mt:if>">
+      <td class="cb">
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" id="custom_field_<mt:var name="field_id" escape="html">" name="custom_fields_export_ids" class="custom-control-input select" value="<mt:var name="field_id">" <mt:if checked>checked="checked" </mt:if>/>
+          <label class="custom-control-label" for="custom_field_<mt:var name="field_id" escape="html">"><span class="sr-only"><__trans phrase="Select"></span></label>
+        </div>
+      </td>
+      <td class="field-name"><mt:var name="field_label" escape="html"></td>
+      <td class="field-object"><mt:var name="field_object" escape="html"></td>
+      <td class="field-type"><mt:var name="field_type" escape="html"></td>
+    </tr>
+<mt:if __last__>
+  </tbody>
+</mt:if>
+</mtapp:listing>
+
+<script type="text/javascript">
+jQuery.mtCheckbox();
+</script>

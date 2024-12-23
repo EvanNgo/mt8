@@ -1,0 +1,621 @@
+name: Comments
+id: Comments
+key: Comments
+description: <MT_TRANS phrase="Provides Comments.">
+author_name: 'Six Apart Ltd.'
+author_link: http://www.movabletype.org/
+l10n_class: Comments::L10N
+version: 8.004000
+
+init: '$Comments::Comments::init'
+
+applications:
+    comments:
+        handler: MT::App::Comments
+        script: '$Comments::MT::App::Comments::script_name'
+        tags: '$Comments::MT::App::Comments::tags'
+    cms:
+        methods:
+            save_commenter_perm: '$Comments::MT::CMS::Comment::save_commenter_perm'
+            trust_commenter: '$Comments::MT::CMS::Comment::trust_commenter'
+            ban_commenter: '$Comments::MT::CMS::Comment::ban_commenter'
+            approve_item: '$Comments::MT::CMS::Comment::approve_item'
+            unapprove_item: '$Comments::MT::CMS::Comment::unapprove_item'
+            empty_junk: '$Comments::MT::CMS::Comment::empty_junk'
+            handle_junk: '$Comments::MT::CMS::Comment::handle_junk'
+            not_junk: '$Comments::MT::CMS::Comment::not_junk'
+            reply: '$Comments::MT::CMS::Comment::reply'
+            do_reply: '$Comments::MT::CMS::Comment::do_reply'
+            dialog_post_comment: '$Comments::MT::CMS::Comment::dialog_post_comment'
+            cfg_registration: '$Core::MT::CMS::Blog::cfg_registration'
+        callbacks:
+            cms_pre_load_filtered_list.commenter: '$Comments::Comments::_pre_load_filtered_list_commenter'
+            cms_edit.comment: '$Comments::MT::CMS::Comment::edit'
+            cms_save_permission_filter.comment: '$Comments::MT::CMS::Comment::can_save'
+            cms_delete_permission_filter.comment: '$Comments::MT::CMS::Comment::can_delete'
+            cms_save_filter.comment: '$Comments::MT::CMS::Comment::save_filter'
+            cms_pre_save.comment: '$Comments::MT::CMS::Comment::pre_save'
+            cms_post_save.comment: '$Comments::MT::CMS::Comment::post_save'
+            cms_post_delete.comment: '$Comments::MT::CMS::Comment::post_delete'
+            cms_edit.commenter: '$Comments::MT::CMS::Comment::edit_commenter'
+            cms_view_permission_filter.commenter: '$Comments::MT::CMS::Comment::can_view_commenter'
+            cms_delete_permission_filter.commenter: '$Comments::MT::CMS::Comment::can_delete_commenter'
+            cms_view_permission_filter.comment: '$Comments::MT::CMS::Comment::can_view'
+            cms_pre_load_filtered_list.comment: '$Comments::MT::CMS::Comment::cms_pre_load_filtered_list'
+        content_actions:
+            comment: '$Comments::Comments::App::CMS::content_actions'
+        list_actions:
+            comment:
+                spam:
+                    label: Mark as Spam
+                    order: 110
+                    code: '$Comments::MT::CMS::Comment::handle_junk'
+                    permit_action:
+                        permit_action: edit_all_comments,edit_own_entry_comment_status
+                        include_all: 1
+                    condition: '$Comments::Comments::App::CMS::mode_is_not_view'
+                    mobile: 1
+                not_spam:
+                    label: Remove Spam status
+                    order: 120
+                    code: '$Comments::MT::CMS::Comment::not_junk'
+                    permit_action:
+                        permit_action: edit_all_comments,edit_own_entry_comment_status
+                        include_all: 1
+                    condition: '$Comments::Comments::App::CMS::mode_is_not_view'
+                    mobile: 1
+                unapprove_comment:
+                    label: Unpublish Comment(s)
+                    order: 100
+                    code: '$Comments::MT::CMS::Comment::unapprove_item'
+                    permit_action:
+                        permit_action: unapprove_comments_via_list
+                        include_all: 1
+                    condition: '$Comments::Comments::App::CMS::mode_is_not_view'
+                    mobile: 1
+                trust_commenter:
+                    label: Trust Commenter(s)
+                    order: 200
+                    code: '$Comments::MT::CMS::Comment::trust_commenter_by_comment'
+                    permit_action:
+                        permit_action: trust_commenters_via_list
+                        include_all: 1
+                    condition: '$Comments::Comments::App::CMS::trust_commenter_condition'
+                    mobile: 1
+                untrust_commenter:
+                    label: Untrust Commenter(s)
+                    order: 300
+                    code:  '$Comments::MT::CMS::Comment::untrust_commenter_by_comment'
+                    permit_action:
+                        permit_action: untrust_commenters_via_list
+                        include_all: 1
+                    condition: '$Comments::Comments::App::CMS::trust_commenter_condition'
+                    mobile: 1
+                ban_commenter:
+                    label: Ban Commenter(s)
+                    order: 400
+                    code: '$Comments::MT::CMS::Comment::ban_commenter_by_comment'
+                    permit_action:
+                        permit_action: ban_commenters_via_list
+                        include_all: 1
+                    condition: '$Comments::Comments::App::CMS::trust_commenter_condition'
+                    mobile: 1
+                unban_commenter:
+                    label: Unban Commenter(s)
+                    order: 500
+                    code:  '$Comments::MT::CMS::Comment::unban_commenter_by_comment'
+                    permit_action:
+                        permit_action: unban_commenters_via_list
+                        include_all: 1
+                    condition: '$Comments::Comments::App::CMS::trust_commenter_condition'
+                    mobile: 1
+                publish:
+                    label: Publish
+                    code: '$Comments::MT::CMS::Comment::approve_item'
+                    mode: approve_item
+                    order: 100
+                    js_message: publish
+                    button: 1
+                    permit_action:
+                        permit_action: approve_comments_via_list
+                        include_all: 1
+                    condition: '$Comments::Comments::App::CMS::mode_is_not_view'
+                    mobile: 1
+                delete:
+                    label: Delete
+                    code: '$Core::MT::CMS::Common::delete'
+                    mode: delete
+                    order: 110
+                    js_message: delete
+                    button: 1
+                    condition: '$Comments::Comments::App::CMS::delete_comment_condition'
+                    mobile: 1
+            commenter:
+                trust:
+                    label: Trust Commenter(s)
+                    order: 100
+                    code: '$Comments::MT::CMS::Comment::trust_commenter'
+                    permit_action: access_to_all_commenter_list
+                    condition: '$Comments::Comments::App::CMS::trust_commenter_condition'
+                untrust:
+                    label: Untrust Commenter(s)
+                    order: 200
+                    code: '$Comments::MT::CMS::Comment::untrust_commenter'
+                    permit_action: access_to_all_commenter_list
+                    condition: '$Comments::Comments::App::CMS::trust_commenter_condition'
+                ban:
+                    label: Ban Commenter(s)
+                    order: 300
+                    code: '$Comments::MT::CMS::Comment::ban_commenter'
+                    permit_action: access_to_all_commenter_list
+                    condition: '$Comments::Comments::App::CMS::trust_commenter_condition'
+                unban:
+                    label: Unban Commenter(s)
+                    order: 400
+                    code: '$Comments::MT::CMS::Comment::unban_commenter'
+                    permit_action: access_to_all_commenter_list
+                    condition: '$Comments::Comments::App::CMS::trust_commenter_condition'
+        menus:
+            'settings:registration':
+                label: Registration
+                order: 500
+                mode: cfg_registration
+                permission: administer_site,edit_config,set_publish_paths
+                system_permission: administer
+                view:
+                    - blog
+                    - website
+            'feedback:comment':
+                label: Comments
+                order: 100
+                mode: list
+                args:
+                    _type: comment
+                condition: '$Comments::Comments::App::CMS::feedback_comment_condition'
+                view:
+                    - blog
+                    - website
+                mobile: 1
+        search_apis: '$Comments::Comments::CMS::Search::search_apis'
+        enable_object_methods: '$Comments::Comments::enable_object_methods'
+    data_api:
+        resources:
+            blog:
+                -
+                    version: 2
+                    fields: '$Comments::Comments::DataAPI::Resource::v2::Blog::fields'
+                    updatable_fields: '$Comments::Comments::DataAPI::Resource::v2::Blog::updatable_fields'
+                -
+                    version: 5
+                    fields: '$Comments::Comments::DataAPI::Resource::v5::Blog::fields'
+                    updatable_fields: '$Comments::Comments::DataAPI::Resource::v5::Blog::updatable_fields'
+            website:
+                -
+                    version: 2
+                    fields: '$Comments::Comments::DataAPI::Resource::v2::Blog::fields'
+                    updatable_fields: '$Comments::Comments::DataAPI::Resource::v2::Blog::updatable_fields'
+                -
+                    version: 5
+                    fields: '$Comments::Comments::DataAPI::Resource::v5::Blog::fields'
+                    updatable_fields: '$Comments::Comments::DataAPI::Resource::v5::Blog::updatable_fields'
+            entry:
+                -
+                    fields: '$Comments::Comments::DataAPI::Resource::Entry::fields'
+                    updatable_fields: '$Comments::Comments::DataAPI::Resource::Entry::updatable_fields'
+            comment:
+                -
+                    version: 1
+                    fields: '$Comments::MT::DataAPI::Resource::Comment::fields'
+                    updatable_fields: '$Comments::MT::DataAPI::Resource::Comment::updatable_fields'
+                -
+                    version: 2
+                    fields: '$Comments::MT::DataAPI::Resource::v2::Comment::fields'
+                    updatable_fields: '$Comments::MT::DataAPI::Resource::v2::Comment::updatable_fields'
+        endpoints:
+            -
+                id: list_comments
+                route: /sites/:site_id/comments
+                verb: GET
+                version: 1
+                handler: '$Comments::MT::DataAPI::Endpoint::Comment::list'
+                openapi_handler: '$Comments::MT::DataAPI::Endpoint::Comment::list_openapi_spec'
+                openapi_options:
+                    can_use_access_token: 1
+                    filtered_list_ds_nouns: comment,comments
+                default_params:
+                    limit: 10
+                    offset: 0
+                    sortBy: id
+                    sortOrder: descend
+                    searchFields: body
+                    filterKeys: status,entryStatus
+                error_codes:
+                    403: Do not have permission to retrieve the list of comments.
+                requires_login: 0
+            -
+                id: list_comments_for_entry
+                route: /sites/:site_id/entries/:entry_id/comments
+                verb: GET
+                version: 1
+                handler: '$Comments::MT::DataAPI::Endpoint::Comment::list_for_entry'
+                openapi_handler: '$Comments::MT::DataAPI::Endpoint::Comment::list_for_entry_openapi_spec'
+                openapi_options:
+                    can_use_access_token: 1
+                    filtered_list_ds_nouns: comment,comments
+                default_params:
+                    limit: 10
+                    offset: 0
+                    sortBy: id
+                    sortOrder: descend
+                    searchFields: body
+                    filterKeys: status
+                error_codes:
+                    403: Do not have permission to retrieve the list of comments.
+                requires_login: 0
+            -
+                id: create_comment
+                route: /sites/:site_id/entries/:entry_id/comments
+                resources:
+                    - comment
+                verb: POST
+                version: 1
+                handler: '$Comments::MT::DataAPI::Endpoint::Comment::create'
+                openapi_handler: '$Comments::MT::DataAPI::Endpoint::Comment::create_openapi_spec'
+                error_codes:
+                    403: Do not have permission to create a comment.
+            -
+                id: create_reply_comment
+                route: /sites/:site_id/entries/:entry_id/comments/:comment_id/replies
+                resources:
+                    - comment
+                verb: POST
+                version: 1
+                handler: '$Comments::MT::DataAPI::Endpoint::Comment::create_reply'
+                openapi_handler: '$Comments::MT::DataAPI::Endpoint::Comment::create_reply_openapi_spec'
+                error_codes:
+                    403: Do not have permission to create a reply to the requested comment.
+            -
+                id: get_comment
+                route: /sites/:site_id/comments/:comment_id
+                version: 1
+                handler: '$Comments::MT::DataAPI::Endpoint::Comment::get'
+                openapi_handler: '$Comments::MT::DataAPI::Endpoint::Comment::get_openapi_spec'
+                openapi_options:
+                    can_use_access_token: 1
+                error_codes:
+                    403: Do not have permission to retrieve the requested comment.
+                requires_login: 0
+            -
+                id: update_comment
+                route: /sites/:site_id/comments/:comment_id
+                resources:
+                    - comment
+                verb: PUT
+                version: 1
+                handler: '$Comments::MT::DataAPI::Endpoint::Comment::update'
+                openapi_handler: '$Comments::MT::DataAPI::Endpoint::Comment::update_openapi_spec'
+                error_codes:
+                    403: Do not have permission to update a comment.
+            -
+                id: delete_comment
+                route: /sites/:site_id/comments/:comment_id
+                verb: DELETE
+                version: 1
+                handler: '$Comments::MT::DataAPI::Endpoint::Comment::delete'
+                openapi_handler: '$Comments::MT::DataAPI::Endpoint::Comment::delete_openapi_spec'
+                error_codes:
+                    403: Do not have permission to delete a comment.
+            -
+                id: list_comments_for_page
+                route: /sites/:site_id/pages/:page_id/comments
+                verb: GET
+                version: 2
+                handler: '$Comments::MT::DataAPI::Endpoint::Comment::list_for_entry'
+                openapi_handler: '$Comments::MT::DataAPI::Endpoint::Comment::list_for_page_openapi_spec'
+                openapi_options:
+                    can_use_access_token: 1
+                    filtered_list_ds_nouns: comment,comments
+                default_params:
+                    limit: 10
+                    offset: 0
+                    sortBy: id
+                    sortOrder: descend
+                    searchFields: body
+                    filterKeys: status
+                error_codes:
+                    403: Do not have permission to retrieve the list of comments.
+                requires_login: 0
+            -
+                id: create_comment_for_page
+                route: /sites/:site_id/pages/:page_id/comments
+                resources:
+                    - comment:
+                verb: POST
+                version: 2
+                handler: '$Comments::MT::DataAPI::Endpoint::Comment::create'
+                openapi_handler: '$Comments::MT::DataAPI::Endpoint::Comment::create_for_page_openapi_spec'
+                error_codes:
+                    403: Do not have permission to create a comment.
+            -
+                id: create_reply_comment_for_page
+                route: /sites/:site_id/pages/:page_id/comments/:comment_id/replies
+                resources:
+                    - comment
+                verb: POST
+                version: 2
+                handler: '$Comments::MT::DataAPI::Endpoint::Comment::create_reply'
+                openapi_handler: '$Comments::MT::DataAPI::Endpoint::Comment::create_reply_for_page_openapi_spec'
+                error_codes:
+                    403: Do not have permission to create a reply to the requested comment.
+        callbacks:
+            data_api_pre_load_filtered_list.commenter: '$Comments::Comments::_pre_load_filtered_list_commenter'
+            data_api_edit.comment: '$Comments::MT::CMS::Comment::edit'
+            data_api_save_permission_filter.comment: '$Comments::MT::CMS::Comment::can_save'
+            data_api_delete_permission_filter.comment: '$Comments::MT::CMS::Comment::can_delete'
+            data_api_save_filter.comment: '$Comments::MT::CMS::Comment::save_filter'
+            data_api_pre_save.comment: '$Comments::MT::CMS::Comment::pre_save'
+            data_api_post_save.comment: '$Comments::MT::CMS::Comment::post_save'
+            data_api_post_delete.comment: '$Comments::MT::CMS::Comment::post_delete'
+            data_api_edit.commenter: '$Comments::MT::CMS::Comment::edit_commenter'
+            data_api_view_permission_filter.commenter: '$Comments::MT::CMS::Comment::can_view_commenter'
+            data_api_delete_permission_filter.commenter: '$Comments::MT::CMS::Comment::can_delete_commenter'
+            data_api_view_permission_filter.comment: '$Comments::MT::DataAPI::Callback::Comment::can_view'
+            data_api_pre_load_filtered_list.comment: '$Comments::MT::DataAPI::Callback::Comment::cms_pre_load_filtered_list'
+    upgrade:
+        callbacks:
+            'MT::Upgrade::seed_database':
+                priority: 10
+                handler: '$Comments::Comments::Upgrade::seed_database'
+
+permissions:
+    blog.administer_site:
+        permitted_action:
+            force_post_comment: 1
+            edit_global_commenter_status: 1
+    blog.comment:
+        permitted_action:
+            comment: 1
+            post_comment: 1
+    blog.create_post:
+        permitted_action:
+            access_to_comment_list: 1
+            delete_own_entry_unpublished_comment: 1
+            edit_own_entry_comment_without_status: 1
+            open_own_entry_comment_edit_screen: 1
+            view_own_entry_comment: 1
+            get_comment_feed: 1
+    blog.edit_all_posts:
+        permitted_action:
+            edit_comment_status: 1
+    blog.manage_content_data:
+        permitted_action:
+            edit_comment_status: 1
+    blog.manage_feedback:
+        permitted_action:
+            access_to_comment_list: 1
+            approve_all_comment: 1
+            ban_commenters_via_list: 1
+            bulk_edit_all_comments: 1
+            delete_every_comment: 1
+            delete_junk_comments: 1
+            edit_all_comments: 1
+            edit_comment_status: 1
+            edit_commenter: 1
+            edit_commenter_status: 1
+            get_comment_feed: 1
+            open_all_comment_edit_screen: 1
+            open_comment_edit_screen: 1
+            open_commenter_edit_screen: 1
+            open_own_entry_comment_edit_screen: 1
+            reply_comment_from_cms: 1
+            save_existing_comment: 1
+            trust_commenters_via_list: 1
+            unapprove_comments_via_list: 1
+            approve_comments_via_list: 1
+            unban_commenters_via_list: 1
+            untrust_commenters_via_list: 1
+            view_commenter: 1
+            view_all_comments: 1
+            delete_comments_via_list: 1
+    blog.manage_pages:
+        permitted_action:
+            open_all_comment_edit_screen: 1
+            view_all_comments: 1
+    blog.publish_post:
+        permitted_action:
+            approve_own_entry_comment: 1
+            bulk_edit_own_entry_comments: 1
+            delete_own_entry_comment: 1
+            edit_own_entry_comment_status: 1
+            unapprove_comments_via_list: 1
+            approve_comments_via_list: 1
+            delete_comments_via_list: 1
+            reply_comment_from_cms: 1
+            edit_comment_status_of_own_entry: 1
+            edit_own_entry_comment: 1
+    system.administer:
+        permitted_action:
+            access_to_all_commenter_list: 1
+            delete_all_junk_comments: 1
+            edit_commenter_status: 1
+    system.manage_content_data:
+        permitted_action:
+            edit_comment_status: 1
+
+tags:
+    block:
+        ## Site
+        SiteIfCommentsOpen?: '$Comments::MT::Template::Tags::Comment::_hdlr_blog_if_comments_open'
+        ## Commenter
+        IfExternalUserManagement?: '$Comments::MT::Template::Tags::Commenter::_hdlr_if_external_user_management'
+        IfCommenterRegistrationAllowed?: '$Comments::MT::Template::Tags::Commenter::_hdlr_if_commenter_registration_allowed'
+        IfCommenterTrusted?: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_trusted'
+        CommenterIfTrusted?: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_trusted'
+        IfCommenterIsAuthor?: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_isauthor'
+        IfCommenterIsEntryAuthor?: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_isauthor'
+        ## Comment
+        IfCommentsModerated?: '$Comments::MT::Template::Tags::Comment::_hdlr_comments_moderated'
+        BlogIfCommentsOpen?: '$Comments::MT::Template::Tags::Comment::_hdlr_blog_if_comments_open'
+        WebsiteIfCommentsOpen?: '$Comments::MT::Template::Tags::Comment::_hdlr_blog_if_comments_open'
+        Comments: '$Comments::MT::Template::Tags::Comment::_hdlr_comments'
+        CommentsHeader: '$Core::MT::Template::Context::slurp'
+        CommentsFooter: '$Core::MT::Template::Context::slurp'
+        CommentEntry: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_entry'
+        CommentIfModerated?: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_if_moderated'
+        CommentParent: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_parent'
+        CommentReplies: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_replies'
+        IfCommentParent?: '$Comments::MT::Template::Tags::Comment::_hdlr_if_comment_parent'
+        IfCommentReplies?: '$Comments::MT::Template::Tags::Comment::_hdlr_if_comment_replies'
+        IfRegistrationRequired?: '$Comments::MT::Template::Tags::Comment::_hdlr_reg_required'
+        IfRegistrationNotRequired?: '$Comments::MT::Template::Tags::Comment::_hdlr_reg_not_required'
+        IfRegistrationAllowed?: '$Comments::MT::Template::Tags::Comment::_hdlr_reg_allowed'
+        IfTypeKeyToken?: '$Comments::MT::Template::Tags::Comment::_hdlr_if_typekey_token'
+        IfAllowCommentHTML?: '$Comments::MT::Template::Tags::Comment::_hdlr_if_allow_comment_html'
+        IfCommentsAllowed?: '$Comments::MT::Template::Tags::Comment::_hdlr_if_comments_allowed'
+        IfCommentsAccepted?: '$Comments::MT::Template::Tags::Comment::_hdlr_if_comments_accepted'
+        IfCommentsActive?: '$Comments::MT::Template::Tags::Comment::_hdlr_if_comments_active'
+        IfNeedEmail?: '$Comments::MT::Template::Tags::Comment::_hdlr_if_need_email'
+        IfRequireCommentEmails?: '$Comments::MT::Template::Tags::Comment::_hdlr_if_need_email'
+        EntryIfAllowComments?: '$Comments::MT::Template::Tags::Comment::_hdlr_entry_if_allow_comments'
+        EntryIfCommentsOpen?: '$Comments::MT::Template::Tags::Comment::_hdlr_entry_if_comments_open'
+        ## Userpic
+        CommenterUserpicAsset: '$Comments::Comments::Tags::Userpic::_hdlr_commenter_userpic_asset'
+    function:
+        CommentSiteID: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_blog_id'
+        SiteCommentCount: '$Comments::MT::Template::Tags::Comment::_hdlr_blog_comment_count'
+        ## Author
+        AuthorCommentCount: '$Comments::Comments::Summary::Author::_hdlr_author_comment_count'
+        ## Commenter
+        CommenterNameThunk: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_name_thunk'
+        CommenterUsername: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_username'
+        CommenterName: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_name'
+        CommenterEmail: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_email'
+        CommenterAuthType: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_auth_type'
+        CommenterAuthIconURL: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_auth_icon_url'
+        CommenterID: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_id'
+        CommenterURL: '$Comments::MT::Template::Tags::Commenter::_hdlr_commenter_url'
+        UserSessionState: '$Comments::MT::Template::Tags::Commenter::_hdlr_user_session_state'
+        UserSessionCookieTimeout: '$Comments::MT::Template::Tags::Commenter::_hdlr_user_session_cookie_timeout'
+        UserSessionCookieName: '$Comments::MT::Template::Tags::Commenter::_hdlr_user_session_cookie_name'
+        UserSessionCookiePath: '$Comments::MT::Template::Tags::Commenter::_hdlr_user_session_cookie_path'
+        UserSessionCookieDomain: '$Comments::MT::Template::Tags::Commenter::_hdlr_user_session_cookie_domain'
+        ## Comment
+        CommentID: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_id'
+        CommentBlogID: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_blog_id'
+        CommentEntryID: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_entry_id'
+        CommentName: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_author'
+        CommentIP: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_ip'
+        CommentAuthor: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_author'
+        CommentAuthorLink: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_author_link'
+        CommentAuthorIdentity: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_author_identity'
+        CommentEmail: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_email'
+        CommentLink: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_link'
+        CommentURL: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_url'
+        CommentBody: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_body'
+        CommentOrderNumber: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_order_num'
+        CommentDate: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_date'
+        CommentParentID: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_parent_id'
+        CommentReplyToLink: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_reply_link'
+        CommentPreviewAuthor: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_author'
+        CommentPreviewIP: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_ip'
+        CommentPreviewAuthorLink: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_author_link'
+        CommentPreviewEmail: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_email'
+        CommentPreviewURL: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_url'
+        CommentPreviewBody: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_body'
+        CommentPreviewDate: '$Core::MT::Template::Context::build_date'
+        CommentPreviewState: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_prev_state'
+        CommentPreviewIsStatic: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_prev_static'
+        CommentRepliesRecurse: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_replies_recurse'
+        BlogCommentCount: '$Comments::MT::Template::Tags::Comment::_hdlr_blog_comment_count'
+        WebsiteCommentCount: '$Comments::MT::Template::Tags::Comment::_hdlr_blog_comment_count'
+        EntryCommentCount: '$Comments::MT::Template::Tags::Comment::_hdlr_entry_comments'
+        CategoryCommentCount: '$Comments::MT::Template::Tags::Comment::_hdlr_category_comment_count'
+        TypeKeyToken: '$Comments::MT::Template::Tags::Comment::_hdlr_typekey_token'
+        CommentFields: '$Comments::MT::Template::Tags::Comment::_hdlr_comment_fields'
+        RemoteSignOutLink: '$Comments::MT::Template::Tags::Comment::_hdlr_remote_sign_out_link'
+        RemoteSignInLink: '$Comments::MT::Template::Tags::Comment::_hdlr_remote_sign_in_link'
+        SignOutLink: '$Comments::MT::Template::Tags::Comment::_hdlr_sign_out_link'
+        SignInLink: '$Comments::MT::Template::Tags::Comment::_hdlr_sign_in_link'
+        SignOnURL: '$Comments::MT::Template::Tags::Comment::_hdlr_signon_url'
+        ## Userpic
+        CommenterUserpic: '$Comments::Comments::Tags::Userpic::_hdlr_commenter_userpic'
+        CommenterUserpicURL: '$Comments::Comments::Tags::Userpic::_hdlr_commenter_userpic_url'
+        ## Score
+        CommentScore: '$Comments::Comments::Tags::Score::_hdlr_comment_score'
+        CommentScoreHigh: '$Comments::Comments::Tags::Score::_hdlr_comment_score_high'
+        CommentScoreLow: '$Comments::Comments::Tags::Score::_hdlr_comment_score_low'
+        CommentScoreAvg: '$Comments::Comments::Tags::Score::_hdlr_comment_score_avg'
+        CommentScoreCount: '$Comments::Comments::Tags::Score::_hdlr_comment_score_count'
+        CommentRank: '$Comments::Comments::Tags::Score::_hdlr_comment_rank'
+
+listing_screens:
+    comment:
+        object_label: Comment
+        default_sort_key: created_on
+        data_api_scope_mode: this
+        permission: access_to_comment_list
+        data_api_permission: ~
+        primary: comment
+        view:
+          - website
+          - blog
+    commenter:
+        primary: name
+        object_label: Commenter
+        object_label_plural: Commenters
+        object_type: author
+        permission: administer
+        default_sort_key: name
+        condition: '$Comments::Comments::listing_screens_commenter_condition'
+        view: system
+        scope_mode: none
+        screen_label: Manage Commenters
+
+list_properties:
+    author: '$Comments::Comments::list_props_author'
+    blog: '$Comments::Comments::list_props_blog'
+    comment: '$Comments::Comments::list_props_comment'
+    commenter: '$Comments::Comments::list_props_commenter'
+    entry: '$Comments::Comments::list_props_entry'
+    member: '$Comments::Comments::list_props_member'
+    page: '$Comments::Comments::list_props_page'
+    website: '$Comments::Comments::list_props_website'
+
+system_filters:
+    comment: '$Comments::Comments::system_filters_comment'
+    commenter: '$Comments::Comments::system_filters_commenter'
+    entry: '$Comments::Comments::system_filters_entry'
+    page: '$Comments::Comments::system_filters_page'
+    member: '$Comments::Comments::system_filters_member'
+
+roles: '$Comments::Comments::roles'
+
+default_templates:
+    base_path: default_templates
+    system:
+        comment_listing:
+            label: Comment Listing
+            description_label: Improved listing of comments.
+        comment_response:
+            label: Comment Response
+            description_label: Displays error, pending or confirmation message for comments.
+        comment_preview:
+            label: Comment Preview
+            description_label: Displays preview of comment.
+    module:
+        comment_detail:
+            label: Comment Detail
+        comments:
+            label: Comments
+    widget:
+        recent_comments:
+            label: Recent Comments
+    'global:email':
+        comment_throttle:
+            label: Comment throttle
+        commenter_confirm:
+            label: Commenter Confirm
+        commenter_notify:
+            label: Commenter Notify
+        new-comment:
+            label: New Comment

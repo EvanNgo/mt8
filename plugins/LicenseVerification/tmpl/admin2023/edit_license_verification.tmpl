@@ -1,0 +1,157 @@
+<mt:setvarblock name="page_title"><__trans phrase="License Verification"></mt:setvarblock>
+
+<mt:setvarblock name="system_msg">
+<mt:if name="error">
+  <mtapp:statusmsg
+     id="generic-error"
+     class="error"
+     can_close="0">
+    <mt:var name="error" escape="html">
+  </mtapp:statusmsg>
+</mt:if>
+<mt:if name="saved">
+  <mtapp:statusmsg
+     id="saved"
+     class="success">
+    <__trans phrase="Your settings have been saved.">
+  </mtapp:statusmsg>
+</mt:if>
+</mt:setvarblock>
+
+<mt:setvarblock name="page_content">
+<mt:if name="has_pd_data">
+<div>
+  <ul>
+  <mt:if name="licensee_name">
+    <li><__trans phrase="Licensee Name">: <mt:var name="licensee_name" escape="html"></li>
+  </mt:if>
+  <mt:if name="licensed_product_name">
+    <li><__trans phrase="Licensed Product Name">: <mt:var name="licensed_product_name" escape="html"></li>
+  </mt:if>
+    <li><__trans phrase="License Key">: <mt:var name="license_key" escape="html"></li>
+    <li><__trans phrase="SAID">: <mt:var name="said" escape="html"></li>
+  <mt:if name="registered_on">
+    <li><__trans phrase="Registered Date">: <mt:var name="registered_on" escape="html"></li>
+  </mt:if>
+  <mt:if name="support_expired_on">
+    <li><__trans phrase="Technical Support Expiration Date">: <mt:var name="support_expired_on" escape="html"></li>
+  </mt:if>
+    <li><__trans phrase="Technical Support Availability">: <mt:if name="is_valid_support"><__trans phrase="Enabled"><mt:else><__trans phrase="Disabled"></mt:else></mt:if></li>
+  <mt:if name="autorenew">
+    <li><__trans phrase="Auto-renew Available"></li>
+  </mt:if>
+  <mt:if name="registered" gt="1">
+    <li><__trans phrase="Registered Count">: <mt:var name="registered" escape="html"></li>
+  </mt:if>
+  </ul>
+</div>
+</mt:if>
+<mt:if name="has_pd_data">
+<div class="d-flex flex-row">
+  <div><__trans phrase="Save Changes"></div>
+  <div class="toggle-button">
+    <a href="#details" data-bs-toggle="collapse" aria-expanded="false" aria-controls="theme-<mt:var name="id" escape="html">">
+      <mtapp:svgicon id="ic_collapse" title="toggle_detail" color="secondary">
+    </a>
+  </div>
+</div>
+<div id="details" class="mt-collapse__content card-block collapse pt-0">
+</mt:if>
+<form id="verify" action="<mt:var name="script_url">" method="post" onsubmit="return validate(this);">
+  <input type="hidden" name="__mode" value="save_license_verification" />
+  <input type="hidden" name="return_args" value="<mt:var name="return_args" escape="html">" />
+  <input type="hidden" name="magic_token" value="<mt:var name="magic_token">" />
+
+<mtapp:settinggroup id="system-support-settings">
+  <mtapp:setting
+     id="said"
+     label="<__trans phrase="SAID">"
+     label_for="said"
+     hint="<__trans phrase='The ID for signing in to <a href="[_1]" target="_blank">Six Apart User Site</a>' params='<mt:var name="six_apart_user_site_url">'>"
+     hint_id="said"
+     show_hint="1">
+  <input type="text" name="said" id="said" class="form-control text num" value="<mt:unless name="has_pd_data"><mt:var name="said"></mt:unless>" aria-describedby="said" />
+  </mt:app:setting>
+
+  <mtapp:setting
+     id="license-key"
+     label="<__trans phrase="License Key">"
+     label_for="license-key"
+     hint="<__trans phrase='You can check your license key if you visit to <a href="[_1]" target="_blank">Six Apart User Site</a>' params='<mt:var name="six_apart_user_site_url">'>"
+     hint_id="licenseKey"
+     show_hint="1">
+  <input type="text" name="license_key" id="license-key" class="form-control text num" value="<mt:unless name="has_pd_data"><mt:var name="license_key"></mt:unless>" aria-describedby="licenseKey" />
+  </mt:app:setting>
+  <button
+    type="submit"
+    accesskey="s"
+    title="<__trans phrase="Save changes to these settings (s)">"
+    class="save action primary button btn btn-primary">
+    <__trans phrase="Save Changes">
+  </button>
+</mtapp:settinggroup>
+
+<mt:include name="include/actions_bar.tmpl" bar_position="bottom" hide_pager="1" settings_bar="1">
+</form>
+
+<mt:if name="has_pd_data">
+  <mtapp:settinggroup id="system-support-settings">
+<div class="mt-5">
+  <form id="delete" action="<mt:var name="script_url">" method="post" onsubmit="return confirmDelete();">
+    <input type="hidden" name="__mode" value="delete_license_verification" />
+    <input type="hidden" name="return_args" value="<mt:var name="return_args" escape="html">" />
+    <input type="hidden" name="magic_token" value="<mt:var name="magic_token">" />
+    <p><__trans phrase="Press following Delete button to delete your data."></p>
+    <button
+      accesskey="x"
+      title="<__trans phrase="Delete (x)">"
+      class="btn btn-default button">
+      <__trans phrase="Delete">
+    </button>
+  </form>
+</div>
+  </mtapp:settinggroup>
+</mt:if>
+
+<mt:if name="has_pd_data">
+</div>
+</mt:if>
+
+</mt:setvarblock>
+
+<mt:setvarblock name="js_include" append="1">
+<script>
+function confirmDelete(f) {
+  if (confirm('<__trans phrase="Are you sure you want to delete your license key?" escape="js">')) {
+    return true;
+  }
+  return false;
+}
+</script>
+</mt:setvarblock>
+
+<mt:setvarblock name="css_include" append="1">
+<style>
+#details {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.toggle-button .mt-icon--secondary {
+  -webkit-transition: 0.2s ease-in-out;
+  transition: 0.2s ease-in-out;
+}
+
+.toggle-button a[aria-expanded="false"] .mt-icon--secondary {
+  -webkit-transform: rotate(180deg);
+          transform: rotate(180deg);
+}
+
+.toggle-button a[aria-expanded="true"] .mt-icon--secondary {
+  -webkit-transform: rotate(0deg);
+          transform: rotate(0deg);
+}
+</style>
+</mt:setvarblock>
+
+<mt:include name="layout/default.tmpl">
+<mt:var name="layout">

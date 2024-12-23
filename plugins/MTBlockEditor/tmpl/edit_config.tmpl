@@ -1,0 +1,113 @@
+<mt:if name="id">
+  <mt:setvarblock name="page_title"><__trans phrase="Edit Custom Block Preset"></mt:setvarblock>
+<mt:else>
+  <mt:setvar name="page_title" value="<__trans phrase="Create Custom Block Preset">">
+  <mt:setvar name="new_object" value="1">
+</mt:if>
+<mt:setvar name="screen_id" value="edit_block">
+<mt:setvar name="position_actions_bottom" value="1">
+
+<mt:setvarblock name="system_msg">
+<div id="msg-block">
+<mt:if name="error">
+  <mtapp:statusmsg
+     id="generic-error"
+     class="error"
+     can_close="0">
+    <mt:var name="error">
+  </mtapp:statusmsg>
+</mt:if>
+<mt:if name="saved">
+  <mtapp:statusmsg
+     id="saved"
+     class="success"
+     can_close="1">
+    <__trans phrase="Your preferences have been saved.">
+  </mtapp:statusmsg>
+</mt:if>
+</div>
+</mt:setvarblock>
+
+<mt:setvarblock name="page_content">
+<form method="post" action="<mt:var name="script_url">" id="config-form">
+  <input type="hidden" name="__mode" value="save" id="__mode" />
+  <input type="hidden" name="_type" value="be_config" />
+  <input type="hidden" name="blog_id" value="<mt:var name="blog_id" default="0">" />
+<mt:if name="id">
+  <input type="hidden" name="id" value="<mt:var name="id" escape="html">" />
+</mt:if>
+  <input type="hidden" name="magic_token" value="<mt:var name="magic_token">" id="magic_token" />
+  <input type="hidden" name="return_args" value="<mt:var name="return_args">" id="return_args" />
+
+  <mtapp:setting
+     id="label"
+     label="<__trans phrase="Label">"
+     label_for="label"
+     required="1">
+    <input type="text" name="label" value="<mt:var name="label" escape="html">" id="label" class="form-control text required" maxlength="50"/>
+  </mtapp:setting>
+
+  <mtapp:settinggroup id="display-settings">
+    <legend class="h3"><__trans phrase="Block Display Settings"></legend>
+
+    <mtapp:setting
+       id="block_display_options"
+       label=""
+       hint="<__trans phrase="You can change the display / non-display and order of blocks.">"
+       hint_id="blockDisplayOptions"
+       show_hint="1">
+
+      <div class="row mt-draggable border-0 flex-row-reverse">
+        <div class="col-auto w-25">
+          <div class="row">
+            <span class="col-auto w-50 text-right">
+              <__trans phrase="Panel">
+            </span>
+            <span class="col-auto w-50 text-right">
+              <__trans phrase="Shortcut">
+            </span>
+          </div>
+        </div>
+      </div>
+      <div id="block_display_options-list" data-type="common">
+      <mt:Loop name="block_types">
+        <div class="mt-draggable sort-enabled row" data-type-id="<mt:Var name="type_id" />" draggable="true" aria-grabbed="false">
+
+          <div class="col-auto mt-ic_move"><mtapp:svgicon id="ic_move" title="Draggable"></div>
+          <div class="col" for="block-show-<mt:Var name="type_id" />"><mt:Var name="label" /></div>
+          <div class="col-auto w-25">
+            <div class="row">
+              <span class="col-auto w-50 text-right">
+                <input type="checkbox" name="panel" class="align-middle" <mt:If name="is_default_visible"> checked="checked"</mt:If>/>
+              </span>
+              <span class="col-auto w-50 text-right">
+                <input type="checkbox" name="shortcut" class="align-middle" <mt:Unless name="block_display_options"><mt:If name="__counter__" le="$shortcut_count_default"> checked="checked"</mt:If></mt:Unless> />
+              </span>
+            </div>
+          </div>
+        </div>
+      </mt:Loop>
+      </div>
+      <input type="hidden" id="block_display_options" name="block_display_options" value="<mt:Var name="block_display_options" encode_html="1" _default="{&quot;common&quot;:[]}"/>" />
+    </mtapp:setting>
+  </mtapp:settinggroup>
+
+  <mt:setvarblock name="action_buttons" id="action-buttons">
+      <button
+          type="submit"
+          accesskey="s"
+          title="<__trans phrase="Save changes to these settings (s)">"
+          class="save action primary button btn btn-primary">
+        <__trans phrase="Save Changes">
+      </button>
+  </mt:setvarblock>
+  <mt:include name="include/actions_bar.tmpl" bar_position="bottom" hide_pager="1" settings_bar="1">
+</mtapp:form>
+</mt:setvarblock>
+
+<mt:setvarblock name="js_include" append="1">
+<script src="<$mt:var name="static_uri"$>plugins/MTBlockEditor/dist/config.min.js?v=<mt:Var name="mt_block_editor_version" />" type="module"></script>
+</mt:setvarblock>
+
+<mt:include name="layout/default.tmpl">
+<mt:var name="layout">

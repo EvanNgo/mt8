@@ -1,0 +1,15 @@
+<mt:if name="is_cms">
+  <div class="form-inline">
+    <__trans phrase="Show">: <select name="options" id="options" class="custom-select form-control">
+      <option value="datetime"<mt:if name="options" eq="datetime"> selected="selected"</mt:if>><__trans phrase="Date & Time"></option>
+      <option value="date"<mt:if name="options" eq="date"> selected="selected"</mt:if>><__trans phrase="Date Only"></option>
+      <option value="time"<mt:if name="options" eq="time"> selected="selected"</mt:if>><__trans phrase="Time Only"></option>
+    </select>
+  </div>
+<mt:else>
+  <__trans phrase="Show">: <select name="options" id="options">
+    <option value="datetime"<mt:if name="options" eq="datetime"> selected="selected"</mt:if>><__trans phrase="Date & Time"></option>
+    <option value="date"<mt:if name="options" eq="date"> selected="selected"</mt:if>><__trans phrase="Date Only"></option>
+    <option value="time"<mt:if name="options" eq="time"> selected="selected"</mt:if>><__trans phrase="Time Only"></option>
+  </select>
+</mt:if>

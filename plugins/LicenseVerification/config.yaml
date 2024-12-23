@@ -1,0 +1,35 @@
+id: LicenseVerification
+name: LicenseVerification
+key: 
+version: 8.004000
+author_link: https://www.sixapart.jp/
+author_name: Six Apart Ltd.
+description: <MT_TRANS phrase="This plugin provides your Movable Type License Verification.">
+l10n_class: LicenseVerification::L10N
+
+applications:
+    cms:
+        callbacks:
+            set_notification_dashboard: '$LicenseVerification::LicenseVerification::App::set_notification_dashboard'
+        methods:
+            edit_license_verification: '$LicenseVerification::LicenseVerification::App::CMS::edit'
+            save_license_verification: '$LicenseVerification::LicenseVerification::App::CMS::save'
+            delete_license_verification: '$LicenseVerification::LicenseVerification::App::CMS::delete'
+        menus:
+            settings:license_verification:
+                label: License Verification
+                order: 1000
+                mode: edit_license_verification
+                system_permission: administer
+                view:
+                    - system
+                condition: >
+                    sub {
+                        my $app = MT->instance;
+                        $app->user->is_superuser;
+                    }
+config_settings:
+    LicenseVerificationStoreURL:
+        default: https://store.sixapart.jp
+    SixApartUserSiteURL:
+        default: https://mtuser.sixapart.jp/Form/Login.aspx

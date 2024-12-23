@@ -1,0 +1,29 @@
+<__trans_section component="commercial">
+<$mt:Var name="page_layout" value="layout-wtt"$>
+
+<mt:SetVarBlock name="title"><$mt:EntryTitle encode_html="1"$> - <$mt:BlogName encode_html="1"$></mt:SetVarBlock>
+<mt:SetVarBlock name="html_head">
+    <mt:EntryPrevious><link rel="prev bookmark" href="<$mt:EntryPermalink$>" title="<$mt:EntryTitle encode_html="1"$>" /></mt:EntryPrevious>
+    <mt:EntryNext><link rel="next bookmark" href="<$mt:EntryPermalink$>" title="<$mt:EntryTitle encode_html="1"$>" /></mt:EntryNext>
+<$mt:Var name="comments_per_page" value="50"$>
+<mt:If tag="EntryCommentCount" gt="$comments_per_page">
+    <script type="text/javascript">
+        MT.entryID = <$mt:EntryID$>;
+        MT.commentsPerPage = <$mt:Var name="comments_per_page"$>;
+        MT.entryCommentCount = <$mt:EntryCommentCount$>;
+        MT.commentIds = [<mt:Comments sort_order="ascend" glue=","><mt:CommentID></mt:Comments>];
+    </script>
+</mt:If>
+    <$mt:EntryTrackbackData$>
+</mt:SetVarBlock>
+
+<$mt:Include module="<__trans phrase="Header">" body_class="mt-entry-archive"$>
+
+<$mt:Include module="<__trans phrase="Entry Detail">"$>
+
+<$mt:Include module="<__trans phrase="TrackBacks">"$>
+
+<$mt:Include module="<__trans phrase="Comments">"$>
+
+<$mt:Include module="<__trans phrase="Footer">"$>
+</__trans_section>

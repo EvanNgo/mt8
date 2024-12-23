@@ -1,0 +1,23 @@
+<__trans_section component="commercial">
+<mt:IfNonZero tag="BlogEntryCount" include_blogs="children" include_with_website="1">
+    <mt:Entries lastn="3" include_blogs="children" include_with_website="1" unique="1">
+        <mt:EntriesHeader>
+<div class="widget-recent-entries widget-archives widget">
+    <h3 class="widget-header"><__trans phrase="Recent Entries"></h3>
+    <div class="widget-content">
+        <dl>
+        </mt:EntriesHeader>
+            <dt><a href="<$mt:EntryPermalink$>"><$mt:EntryTitle$></a></dt>
+        <mt:if name="main_index">
+            <dd><$mt:EntryBody words="20" convert_breaks="1"$>&hellip;</dd>
+        </mt:if>
+            <dd class="entry-blog"><__trans phrase="on [_1]" params="<a href="<$mt:EntryBlogURL$>"><$mt:EntryBlogName$></a>"></dd>
+            <dd class="entry-meta"><__trans phrase="By [_1] | Comments ([_2])" params="<mt:If tag="EntryAuthorDisplayName"><$mt:EntryAuthorDisplayName encode_html="1"$><mt:Else><$mt:EntryAuthorUsername encode_html="1"$></mt:If>%%<$mt:EntryCommentCount$>"></dd>
+        <mt:EntriesFooter>
+        </dl>
+    </div>
+</div>
+        </mt:EntriesFooter>
+    </mt:Entries>
+</mt:IfNonZero>
+</__trans_section>

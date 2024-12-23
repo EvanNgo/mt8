@@ -1,0 +1,32 @@
+/* - edit_field.tmpl */
+#example-tmplate-code {
+    margin-top: 10px;
+}
+.active#tag-field #code { 
+    display: block;
+    width: 75%;
+    margin-top: 3px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+#tag-field #code { 
+    display: none;
+}
+
+#edit_field #basename-field .field-content #basename-lock { 
+    float: none;
+}
+
+#edit_field #basename-lock { 
+    display: inline;
+}
+
+/* - date-picker.tmpl */
+.field-content input.entry-date { 
+    width: 7em;
+}
+.field-content input.entry-time { 
+    width: 5.5em;
+}

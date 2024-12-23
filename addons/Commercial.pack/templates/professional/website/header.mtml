@@ -1,0 +1,78 @@
+<$mt:WebsiteID setvar="website_id"$>
+<__trans_section component="commercial">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" id="sixapart-standard">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=<$mt:PublishCharset$>" />
+    <meta name="generator" content="<$mt:ProductName version="1"$>" />
+    <link rel="stylesheet" href="<$mt:Link template="styles"$>" type="text/css" />
+    <link rel="start" href="<$mt:WebsiteURL$>" title="<__trans phrase="Home">" />
+    <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="<$mt:Link template="feed_recent"$>" />
+    <script type="text/javascript" src="<$mt:Link template="javascript"$>"></script>
+    <$mt:Var name="html_head"$>
+    <script type="text/javascript">
+    var blog_id = '<$mt:WebsiteID$>';
+    var page_id = '<mt:IfArchiveType archive_type="Page"><$mt:PageID$><mt:Else><mt:Pages tag="@home"><$mt:PageID$></mt:Pages></mt:IfArchiveType>';
+    </script>
+    <$mt:CCLicenseRDF$>
+    <$mt:CanonicalLink$>
+    <title><$mt:Var name="title"$></title>
+    <$mt:StatsSnippet$>
+</head>
+<body id="<$mt:BlogTemplateSetID$>" class="<$mt:Var name="body_class"$> <$mt:Var name="page_layout"$>">
+    <div id="container">
+        <div id="container-inner">
+            <div id="header">
+                <div id="header-inner">
+                    <div id="header-content">
+<mt:If name="main_index">
+                        <h1 id="header-name"><a href="<$mt:WebsiteURL$>" accesskey="1"><$mt:WebsiteName encode_html="1"$></a></h1>
+                        <h2 id="header-description"><$mt:WebsiteDescription$></h2>
+<mt:Else>
+                        <div id="header-name"><a href="<$mt:WebsiteURL$>" accesskey="1"><$mt:WebsiteName encode_html="1"$></a></div>
+                        <div id="header-description"><$mt:WebsiteDescription$></div>
+</mt:If>
+                        <$mt:Include module="<__trans phrase="Sign In">" $>
+                    </div>
+                </div>
+            </div>
+            <div id="main-navigation">
+                <div id="main-navigation-inner">
+                    <$mt:Include module="<__trans phrase="Navigation">" $>
+                    <$mt:Include module="<__trans phrase="Search">" $>
+                </div>
+            </div>
+<mt:Unless name="main_index">
+            <div id="breadcrumbs">
+                <div id="breadcrumbs-inner">
+                    <p id="breadcrumbs-content">
+                        <a href="<$mt:WebsiteURL$>"><$mt:WebsiteName encode_html="1"$></a> &gt; 
+    <mt:If name="entry_archive">
+                        <a href="<$mt:EntryPermalink$>" class="current"><$mt:EntryTitle$></a>
+    <mt:ElseIf name="page_archive">
+                        <a href="<$mt:PagePermalink$>" class="current"><$mt:PageTitle$></a>
+    <mt:Else>
+        <mt:Unless name="datebased_archive">
+            <mt:IfArchiveType archive_type="Category">
+                        <a href="<$mt:ArchiveLink$>" class="current"><__trans phrase="Recently in <em>[_1]</em> Category" params="<$mt:ArchiveTitle$>"></a>
+            </mt:IfArchiveType>
+            <mt:IfArchiveType archive_type="Author">
+                        <a href="<$mt:ArchiveLink$>" class="current"><__trans phrase="Recently by <em>[_1]</em>" params="<$mt:ArchiveTitle$>"></a>
+            </mt:IfArchiveType>
+        <mt:Else>
+                        <a href="<$mt:ArchiveLink$>" class="current"><$mt:Var name="page_title"$></a>
+        </mt:Unless>
+    </mt:if>
+                    </p>
+                </div>
+            </div>
+</mt:Unless>
+            <div id="content">
+                <div id="content-inner">
+<mt:If name="main_index">
+                    <div id="homepage-image">&nbsp;</div>
+</mt:If>
+                    <div id="alpha">
+                        <div id="alpha-inner">
+</__trans_section>
