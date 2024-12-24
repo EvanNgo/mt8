@@ -1,0 +1,116 @@
+create table cs_case (
+  id                int auto_increment not null comment '事案ID',
+  name              varchar(255)       not null comment '事案名',
+  accrual_date      date                        comment '発生日',
+  detail            varchar(255)                comment '内容',
+  insert_user_id    int                         comment '登録者ID',
+  insert_date       datetime                    comment '登録日時',
+  update_user_id    int                         comment '更新者ID',
+  update_date       datetime                    comment '更新日時',
+  constraint cs_case_PKC primary key (id)
+) comment '事案' ;
+
+-- ログ
+create table cs_log (
+  id                    int auto_increment not null comment 'ログID',
+  log_display_type      int                         comment 'ログ画面区分',
+  log_display_type_name varchar(255)                comment 'ログ画面区分名',
+  case_id               int                         comment '事案ID',
+  insert_user_login_id  varchar(255)                comment '登録者ログインID',
+  insert_user_name      varchar(255)                comment '登録者名',
+  info_name             varchar(255)                comment '情報名',
+  log_operation_type    int                         comment 'ログ操作区分',
+  log_detail            varchar(255)                comment 'ログ詳細',
+  insert_user_id        int                         comment '登録者ID',
+  insert_date           datetime                    comment '登録日時',
+  update_user_id        int                         comment '更新者ID',
+  update_date           datetime                    comment '更新日時',
+  constraint cs_log_PKC primary key (id)
+) comment 'ログ' ;
+
+
+-- 動員
+create table cs_mobilization (
+  id                       int auto_increment not null comment '動員ID',
+  case_id                  int                         comment '事案ID',
+  group_id                 int                         comment 'グループID',
+  user_id                  int                         comment 'ユーザーID',
+  name                     varchar(255)       not null comment '動員名',
+  name_kana                varchar(255)       not null comment '動員名（フリガナ）',
+  organization_id          int                         comment '組織ID',
+  organization_name        varchar(255)       not null comment '組織名',
+  gender                   int                         comment '性別',
+  clothing_size            int                         comment '防護服サイズ',
+  shoe_size                int                         comment '長靴サイズ',
+  experience               int                         comment '動員経験',
+  contact_flg              int                         comment '連絡員フラグ',
+  remarks                  varchar(255)                comment '備考',
+  insert_user_id           int                         comment '登録者ID',
+  insert_date              datetime                    comment '登録日時',
+  update_user_id           int                         comment '更新者ID',
+  update_date              datetime                    comment '更新日時',
+  constraint cs_mobilization_PKC primary key (id)
+) comment '動員' ;
+
+-- 組織
+create table cs_organization (
+  id                       int auto_increment not null comment '組織ID',
+  name                     varchar(255)       not null comment '組織名',
+  type                     int                         comment '組織区分',
+  organization_rank        int                         comment '組織ランク',
+  manager_organization_id  int                         comment '主管課組織ID',
+  remarks                  varchar(255)                comment '備考',
+  insert_user_id           int                         comment '登録者ID',
+  insert_date              datetime                    comment '登録日時',
+  update_user_id           int                         comment '更新者ID',
+  update_date              datetime                    comment '更新日時',
+  constraint cs_organization_PKC primary key (id)
+) comment '組織' ;
+
+
+
+
+-- グループ
+create table cs_group (
+  id                       int auto_increment not null comment 'グループID',
+  case_id                  int                         comment '事案ID',
+  group_type               int                         comment 'グループ区分',
+  name                     varchar(255)                comment 'グループ名',
+  remarks                  varchar(255)                comment '備考',
+  insert_user_id           int                         comment '登録者ID',
+  insert_date              datetime                    comment '登録日時',
+  update_user_id           int                         comment '更新者ID',
+  update_date              datetime                    comment '更新日時',
+  constraint cs_group_PKC primary key (id)
+) comment 'グループ' ;
+
+-- グループ組織
+create table cs_group_organization (
+  id                       int auto_increment not null comment 'グループ組織ID',
+  case_id                  int                         comment '事案ID',
+  group_id                 int                         comment 'グループID',
+  organization_id          int                         comment '組織ID',
+  insert_user_id           int                         comment '登録者ID',
+  insert_date              datetime                    comment '登録日時',
+  update_user_id           int                         comment '更新者ID',
+  update_date              datetime                    comment '更新日時',
+  constraint cs_group_organization_PKC primary key (id)
+) comment 'グループ組織' ;
+
+-- 動員確定
+create table cs_mobilization_determine (
+  id                       int auto_increment not null       comment '動員確定ID',
+  case_id                  int                               comment '事案ID',
+  organization_id          int                               comment '組織ID',
+  people_num               int                               comment '人数',
+  organization_mobilization_determine_status       int       comment '各所確定状況',
+  organization_mobilization_determine_update_date  datetime  comment '各所確定状況更新日時',
+  admin_mobilization_determine_status              int       comment 'とりまとめ確定状況',
+  admin_mobilization_determine_update_date         datetime  comment 'とりまとめ確定状況更新日時',
+  insert_user_id           int                               comment '登録者ID',
+  insert_date              datetime                          comment '登録日時',
+  update_user_id           int                               comment '更新者ID',
+  update_date              datetime                          comment '更新日時',
+  constraint cs_mobilization_determine_PKC primary key (id)
+) comment '動員確定' ;
+
