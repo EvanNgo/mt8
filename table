@@ -1,0 +1,12 @@
+ユーザー名（カナ）	テキスト	○	usernamekana		AuthorDataUserNameKana																									
+組織ID		テキスト	○	userorganizationid		AuthorDataUserOrganizationId																								
+権限区分		テキスト	○	useradmintype		AuthorDataUserAdminType		1:一般、2:管理者、3:システム管理者																					
+性別		テキスト		usergender		AuthorDataUserGender		1:男、2:女																					
+防護服サイズ	テキスト		userclothingsize		AuthorDataUserClothingSize		1:S、2:M、3:L、4:LL、5:LLL																					
+長靴サイズ		テキスト		usershoesize		AuthorDataUserShoeSize		1:21、2:21.5、3:22、4:22.5、5:23、6:23.5、7:24、8:24.5、9:25、10:25.5、11:26、12:26.5、13:27、14:27.5、15:28、16:28.5、17:29、18:29.5、19:30																					
+動員経験		テキスト		userexperience		AuthorDataUserExperience		0:無、1:有																					
+備考		テキスト		userremarks		AuthorDataUserRemarks		※.MTのAPIでは、ユーザーの備考の登録ができなかったため、カスタムフィールドで対応する。																					
+登録者ID		テキスト		insert_user_id		AuthorDataInsertUserId				
+登録日時		テキスト		insert_date		AuthorDataInsertDate																		
+更新者ID		テキスト		update_user_id		AuthorDataUpdateUserId																											
+更新日時		テキスト		update_date		AuthorDataUpdateDate																											
